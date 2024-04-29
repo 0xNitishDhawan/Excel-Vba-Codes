@@ -1,0 +1,7 @@
+Sub ApplyCustomNumberFormat()
+    Dim rng As Range
+    Set rng = Range("A1") ' Change to the cell you want to format
+
+    ' Apply a custom number format
+    rng.NumberFormat = "mmm-yy" ' Format as mmm-yy
+End Sub

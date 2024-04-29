@@ -1,0 +1,157 @@
+Sub ExcelToHTML()
+    Dim LastRow As Long
+    Dim i As Integer
+    Application.ScreenUpdating = False
+
+'Insert Function fnConvert2HTML into B1 cell of WS1
+    Sheets("Sheet1").Select
+    Range("D2").FormulaLocal = "=fnConvert2HTML(B2)"
+
+'Find the last row of column A of WS1
+    LastRow = Range("B" & Rows.Count).End(xlUp).Row
+                                    
+'Extend function to the last row
+    For i = 2 To LastRow
+        Range("D" & i).Select
+        ActiveCell.FormulaR1C1 = "=@fnConvert2HTML(RC[-2])"
+    Next
+
+'Copy/Paste Column B as values
+    Range("D1:D" & LastRow).Copy
+    Range("D1").PasteSpecial Paste:=xlPasteValues
+
+'Replace all <br><br> with </p><p>
+    Range("D1:D" & LastRow).Replace What:="<br><br>", Replacement:="</p><p>"
+    
+    Range("E2").FormulaLocal = "=fnConvert2HTML(C2)"
+
+'Find the last row of column A of WS1
+    LastRow = Range("C" & Rows.Count).End(xlUp).Row
+                                    
+'Extend function to the last row
+    For i = 2 To LastRow
+        Range("E" & i).Select
+        ActiveCell.FormulaR1C1 = "=@fnConvert2HTML(RC[-2])"
+    Next
+
+'Copy/Paste Column B as values
+    Range("E1:E" & LastRow).Copy
+    Range("E1").PasteSpecial Paste:=xlPasteValues
+
+'Replace all <br><br> with </p><p>
+    Range("E1:E" & LastRow).Replace What:="<br><br>", Replacement:="</p><p>"
+
+End Sub
+
+Function fnConvert2HTML(myCell As Range) As String
+    Dim bldTagOn, itlTagOn, ulnTagOn, colTagOn As Boolean
+    Dim i, j, chrCount As Integer
+    Dim chrCol, chrLastCol, htmlTxt As String
+    j = 0
+    
+    bldTagOn = False
+    itlTagOn = False
+    ulnTagOn = False
+    colTagOn = False
+    htmlTxt = "<p>"
+    chrCol = "NONE"
+    chrCount = myCell.Characters.Count
+    
+    For i = 1 To chrCount
+        With myCell.Characters(i, 1)
+            If (.Font.Color) Then
+                chrCol = fnGetCol(.Font.Color)
+                If Not colTagOn Then
+                    htmlTxt = htmlTxt & "<font color=#" & chrCol & ">"
+                    colTagOn = True
+                Else
+                    If chrCol <> chrLastCol Then htmlTxt = htmlTxt & "</font><font color=#" & chrCol & ">"
+                End If
+            Else
+                chrCol = "NONE"
+                If colTagOn Then
+                    htmlTxt = htmlTxt & "</font>"
+                    colTagOn = False
+                End If
+            End If
+            chrLastCol = chrCol
+            
+            If .Font.Bold = True Then
+                If Not bldTagOn Then
+                    htmlTxt = htmlTxt & "<strong>"
+                    bldTagOn = True
+                End If
+            Else
+                If bldTagOn Then
+                    htmlTxt = htmlTxt & "</strong>"
+                    bldTagOn = False
+                End If
+            End If
+    
+            If .Font.Italic = True Then
+                If Not itlTagOn Then
+                    htmlTxt = htmlTxt & "<em>"
+                    itlTagOn = True
+                End If
+            Else
+                If itlTagOn Then
+                    htmlTxt = htmlTxt & "</em>"
+                    itlTagOn = False
+                End If
+            End If
+    
+            If .Font.Underline > 0 Then
+                If Not ulnTagOn Then
+                    htmlTxt = htmlTxt & "<u>"
+                    ulnTagOn = True
+                End If
+            Else
+                If ulnTagOn Then
+                    htmlTxt = htmlTxt & "</u>"
+                    ulnTagOn = False
+                End If
+            End If
+            
+            If (Asc(.Text) = 10) Then
+                htmlTxt = htmlTxt & "<br>"
+            Else
+                htmlTxt = htmlTxt & .Text
+            End If
+        End With
+        If j > 15 Then
+         htmlTxt = htmlTxt & "<br>"
+            j = 0
+        Else
+            j = j + 1
+        End If
+    Next
+    
+    If colTagOn Then
+        htmlTxt = htmlTxt & "</font>"
+        colTagOn = False
+    End If
+    If bldTagOn Then
+        htmlTxt = htmlTxt & "</strong>"
+        bldTagOn = False
+    End If
+    If itlTagOn Then
+        htmlTxt = htmlTxt & "</em>"
+        itlTagOn = False
+    End If
+    If ulnTagOn Then
+        htmlTxt = htmlTxt & "</u>"
+        ulnTagOn = False
+    End If
+    htmlTxt = htmlTxt
+    fnConvert2HTML = htmlTxt & "</p>"
+    
+End Function
+
+Function fnGetCol(strCol As String) As String
+    Dim rVal, gVal, bVal As String
+    strCol = Right("000000" & Hex(strCol), 6)
+    bVal = Left(strCol, 2)
+    gVal = Mid(strCol, 3, 2)
+    rVal = Right(strCol, 2)
+    fnGetCol = rVal & gVal & bVal
+End Function

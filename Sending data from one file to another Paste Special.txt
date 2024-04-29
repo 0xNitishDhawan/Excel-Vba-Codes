@@ -1,0 +1,37 @@
+Sub ExcelToHTML()
+    
+Dim myPath As String
+Dim SR, DR As String
+Dim WS As Worksheet
+Dim LastRow As Long
+Dim OpenedWorkbook As Workbook
+
+Set WS = ThisWorkbook.Sheets("Sheet1")
+
+With WS
+    .Cells(1, 1) = "Fisacl Period"
+    .Cells(1, 2) = "MTD"
+    .Cells(1, 3) = "YTD"
+    .Cells(1, 4) = "MTD Comments"
+    .Cells(1, 5) = "YTD Comments"
+End With
+
+
+myPath = "C:\Users\Nitish Dhawan\OneDrive - BENNETT UNIVERSITY\Desktop\Variables\First.xlsx"
+
+Set OpenedWorkbook = Workbooks.Open(myPath)
+LastRow = OpenedWorkbook.Worksheets("Sheet1").Range("A" & OpenedWorkbook.Worksheets("Sheet1").Rows.Count).End(xlUp).Offset(0).Row
+SR = "A1:B" & LastRow
+DR = "A2:B" & LastRow
+With OpenedWorkbook.Worksheets("Sheet1")
+    .Range(SR).Copy
+End With
+
+WS.Range(DR).PasteSpecial (xlPasteValues)
+
+OpenedWorkbook.Close (False)
+
+
+End Sub
+
+
