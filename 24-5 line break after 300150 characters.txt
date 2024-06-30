@@ -1,0 +1,258 @@
+Sub ExcelToHTML()
+    
+    Dim myPath As String
+    Dim myFile, SR, DR As String
+    Dim WS As Worksheet
+    Dim i As Integer
+    Dim lastrow As Long
+    
+    Set WS = ThisWorkbook.Sheets("Sheet1")
+     UserName = Environ("UserName")
+    With WS
+        .Cells.ClearContents
+        .Cells(1, 1) = "Fiscal Period"
+        .Cells(1, 2) = "Exec Summary"
+        .Cells(1, 3) = "Passengers"
+        .Cells(1, 4) = "Capacity Analysis"
+        .Cells(1, 5) = "People"
+        .Cells(1, 6) = "Revenue"
+        .Cells(1, 7) = "Opex"
+        .Cells(1, 8) = "Exec Summary"
+        .Cells(1, 9) = "Passengers"
+        .Cells(1, 10) = "Capacity Analysis"
+        .Cells(1, 11) = "People"
+        .Cells(1, 12) = "Revenue"
+        .Cells(1, 13) = "Opex"
+    End With
+    
+    
+    myPath = "C:\Users\" & UserName & "\OneDrive - BENNETT UNIVERSITY\Desktop\Variables\"
+    myFile = Dir(myPath)
+    i = WS.Range("A" & WS.Rows.Count).End(xlUp).Offset(1).Row
+    
+    Do While myFile <> ""
+    
+        Workbooks.Open Filename:=myPath & myFile
+        lastrow = ActiveWorkbook.Worksheets("Sheet1").Range("A" & ActiveWorkbook.Worksheets("Sheet1").Rows.Count).End(xlUp).Offset(0).Row
+        While ActiveWorkbook.Worksheets("Sheet1").Cells(lastrow, 1).Value = ""
+            lastrow = lastrow - 1
+        Wend
+        
+        SR = "A2:G" & lastrow
+        DR = "A" & i & ":G" & i + lastrow - 2
+        ActiveWorkbook.Worksheets("Sheet1").Range(SR).Copy WS.Range(DR)
+        i = i + lastrow - 1
+        ActiveWorkbook.Close savechanges:=False
+        myFile = Dir
+    Loop
+
+    Application.ScreenUpdating = False
+
+'Insert Function fnConvert2HTML into H1 cell of Sheet1
+    Sheets("Sheet1").Select
+    Range("H2").FormulaLocal = "=fnConvert2HTML(B2,300)"
+    lastrow = Range("B" & Rows.Count).End(xlUp).Row
+    For i = 2 To lastrow
+        Range("H" & i).Select
+        ActiveCell.FormulaR1C1 = "=@fnConvert2HTML(RC[-6],300)"
+    Next
+    Range("H1:H" & lastrow).Copy
+    Range("H1").PasteSpecial Paste:=xlPasteValues
+    Range("H1:H" & lastrow).Replace What:="<br><br>", Replacement:="</p><p>"
+
+'Insert Function fnConvert2HTML into I1 cell of Sheet1
+    Sheets("Sheet1").Select
+    Range("I2").FormulaLocal = "=fnConvert2HTML(C2,150)"
+    lastrow = Range("C" & Rows.Count).End(xlUp).Row
+    For i = 2 To lastrow
+        Range("I" & i).Select
+        ActiveCell.FormulaR1C1 = "=@fnConvert2HTML(RC[-6],150)"
+    Next
+    Range("I1:I" & lastrow).Copy
+    Range("I1").PasteSpecial Paste:=xlPasteValues
+    Range("I1:I" & lastrow).Replace What:="<br><br>", Replacement:="</p><p>"
+
+'Insert Function fnConvert2HTML into J1 cell of Sheet1
+    Sheets("Sheet1").Select
+    Range("J2").FormulaLocal = "=fnConvert2HTML(D2,150)"
+    lastrow = Range("D" & Rows.Count).End(xlUp).Row
+    For i = 2 To lastrow
+        Range("J" & i).Select
+        ActiveCell.FormulaR1C1 = "=@fnConvert2HTML(RC[-6],150)"
+    Next
+    Range("J1:J" & lastrow).Copy
+    Range("J1").PasteSpecial Paste:=xlPasteValues
+    Range("J1:J" & lastrow).Replace What:="<br><br>", Replacement:="</p><p>"
+    
+'Insert Function fnConvert2HTML into K1 cell of Sheet1
+    Sheets("Sheet1").Select
+    Range("K2").FormulaLocal = "=fnConvert2HTML(E2,150)"
+    lastrow = Range("E" & Rows.Count).End(xlUp).Row
+    For i = 2 To lastrow
+        Range("K" & i).Select
+        ActiveCell.FormulaR1C1 = "=@fnConvert2HTML(RC[-6],150)"
+    Next
+    Range("K1:K" & lastrow).Copy
+    Range("K1").PasteSpecial Paste:=xlPasteValues
+    Range("K1:K" & lastrow).Replace What:="<br><br>", Replacement:="</p><p>"
+    
+'Insert Function fnConvert2HTML into L1 cell of Sheet1
+    Sheets("Sheet1").Select
+    Range("L2").FormulaLocal = "=fnConvert2HTML(F2,150)"
+    lastrow = Range("F" & Rows.Count).End(xlUp).Row
+    For i = 2 To lastrow
+        Range("L" & i).Select
+        ActiveCell.FormulaR1C1 = "=@fnConvert2HTML(RC[-6],150)"
+    Next
+    Range("L1:L" & lastrow).Copy
+    Range("L1").PasteSpecial Paste:=xlPasteValues
+    Range("L1:L" & lastrow).Replace What:="<br><br>", Replacement:="</p><p>"
+    
+'Insert Function fnConvert2HTML into M1 cell of Sheet1
+    Sheets("Sheet1").Select
+    Range("M2").FormulaLocal = "=fnConvert2HTML(G2,150)"
+    lastrow = Range("F" & Rows.Count).End(xlUp).Row
+    For i = 2 To lastrow
+        Range("M" & i).Select
+        ActiveCell.FormulaR1C1 = "=@fnConvert2HTML(RC[-6],150)"
+    Next
+    Range("M1:M" & lastrow).Copy
+    Range("M1").PasteSpecial Paste:=xlPasteValues
+    Range("M1:M" & lastrow).Replace What:="<br><br>", Replacement:="</p><p>"
+    
+     Dim wbSource As Workbook
+    Dim wbDestination As Workbook
+    Dim masterNextRow As Long
+    
+    Set wbSource = ThisWorkbook
+    Set wbDestination = Workbooks.Open("C:\Users\" & UserName & "\OneDrive - BENNETT UNIVERSITY\Desktop\Source.xlsx")
+    
+    masterNextRow = wbDestination.Worksheets("Sheet1").Range("A" & wbDestination.Worksheets("Sheet1").Rows.Count).End(xlUp).Offset(1).Row
+    
+    wbSource.Worksheets("Sheet1").Range("A:A").Copy _
+    wbDestination.Worksheets("Sheet1").Range("A:A")
+    
+    wbSource.Worksheets("Sheet1").Range("H:M").Copy _
+    wbDestination.Worksheets("Sheet1").Range("B:G")
+    
+    wbDestination.Close (True)
+
+End Sub
+
+Function fnConvert2HTML(myCell As Range, lineLength As Long) As String
+    Dim bldTagOn, itlTagOn, ulnTagOn, colTagOn As Boolean
+    Dim i, j, chrCount As Integer
+    Dim chrCol, chrLastCol, htmlTxt As String
+    j = 0
+    
+    bldTagOn = False
+    itlTagOn = False
+    ulnTagOn = False
+    colTagOn = False
+    htmlTxt = "<p>"
+    chrCol = "NONE"
+    chrCount = myCell.Characters.Count
+    
+    For i = 1 To chrCount
+        With myCell.Characters(i, 1)
+            If (.Font.Color) Then
+                chrCol = fnGetCol(.Font.Color)
+                If Not colTagOn Then
+                    htmlTxt = htmlTxt & "<font color=#" & chrCol & ">"
+                    colTagOn = True
+                Else
+                    If chrCol <> chrLastCol Then htmlTxt = htmlTxt & "</font><font color=#" & chrCol & ">"
+                End If
+            Else
+                chrCol = "NONE"
+                If colTagOn Then
+                    htmlTxt = htmlTxt & "</font>"
+                    colTagOn = False
+                End If
+            End If
+            chrLastCol = chrCol
+            
+            If .Font.Bold = True Then
+                If Not bldTagOn Then
+                    htmlTxt = htmlTxt & "<strong>"
+                    bldTagOn = True
+                End If
+            Else
+                If bldTagOn Then
+                    htmlTxt = htmlTxt & "</strong>"
+                    bldTagOn = False
+                End If
+            End If
+    
+            If .Font.Italic = True Then
+                If Not itlTagOn Then
+                    htmlTxt = htmlTxt & "<em>"
+                    itlTagOn = True
+                End If
+            Else
+                If itlTagOn Then
+                    htmlTxt = htmlTxt & "</em>"
+                    itlTagOn = False
+                End If
+            End If
+    
+            If .Font.Underline > 0 Then
+                If Not ulnTagOn Then
+                    htmlTxt = htmlTxt & "<u>"
+                    ulnTagOn = True
+                End If
+            Else
+                If ulnTagOn Then
+                    htmlTxt = htmlTxt & "</u>"
+                    ulnTagOn = False
+                End If
+            End If
+            
+            If (Asc(.Text) = 10) Then
+                htmlTxt = htmlTxt & "<br>"
+            Else
+                htmlTxt = htmlTxt & .Text
+            End If
+        End With
+        If j >= lineLength And Mid(myCell.Value, i, 1) = " " Then
+         htmlTxt = htmlTxt & "<br>"
+            j = 0
+        Else
+            j = j + 1
+        End If
+    Next
+    
+    If colTagOn Then
+        htmlTxt = htmlTxt & "</font>"
+        colTagOn = False
+    End If
+    If bldTagOn Then
+        htmlTxt = htmlTxt & "</strong>"
+        bldTagOn = False
+    End If
+    If itlTagOn Then
+        htmlTxt = htmlTxt & "</em>"
+        itlTagOn = False
+    End If
+    If ulnTagOn Then
+        htmlTxt = htmlTxt & "</u>"
+        ulnTagOn = False
+    End If
+    htmlTxt = htmlTxt
+    fnConvert2HTML = htmlTxt & "</p><br>"
+     j = 0
+    If myCell.Value = "" Then
+        fnConvert2HTML = ""
+    End If
+    
+End Function
+
+Function fnGetCol(strCol As String) As String
+    Dim rVal, gVal, bVal As String
+    strCol = Right("000000" & Hex(strCol), 6)
+    bVal = Left(strCol, 2)
+    gVal = Mid(strCol, 3, 2)
+    rVal = Right(strCol, 2)
+    fnGetCol = rVal & gVal & bVal
+End Function
+
