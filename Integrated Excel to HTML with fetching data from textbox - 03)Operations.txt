@@ -1,10 +1,11 @@
 Sub ExcelToHTML()
-    
+
     Dim myPath As String
     Dim myFile, SR, DR As String
     Dim WS As Worksheet
     Dim i As Integer
     Dim lastrow As Long
+    Dim rng As Range
     
     Set WS = ThisWorkbook.Sheets("Sheet1")
     
@@ -29,25 +30,34 @@ Sub ExcelToHTML()
     
         Workbooks.Open Filename:=myPath & myFile
 
-	CopycellPerformanceT1 ActiveWorkbook.Worksheets("Sheet1").Range("A2")
-	CopycellPerformanceT2 ActiveWorkbook.Worksheets("Sheet1").Range("B2")
-	CopycellSummaryT1 ActiveWorkbook.Worksheets("Sheet1").Range("A3")
-	CopycellSummaryT2 ActiveWorkbook.Worksheets("Sheet1").Range("B3")
-	CopycellAirportOperationsT1 ActiveWorkbook.Worksheets("Sheet1").Range("A4")
-	CopycellAirportOperationsT2 ActiveWorkbook.Worksheets("Sheet1").Range("B4")
-	CopycellEngineeringandBaggageT1 ActiveWorkbook.Worksheets("Sheet1").Range("A5")
-	CopycellEngineeringandBaggageT2 ActiveWorkbook.Worksheets("Sheet1").Range("B5")
-	CopycellOpsPlanningT1 ActiveWorkbook.Worksheets("Sheet1").Range("A6")
-	CopycellOpsPlanningT2 ActiveWorkbook.Worksheets("Sheet1").Range("B6")
-	CopycellCOODirectorateT1 ActiveWorkbook.Worksheets("Sheet1").Range("A7")
-	CopycellCOODirectorateT2 ActiveWorkbook.Worksheets("Sheet1").Range("B7")
-	CopycellSecurityT1 ActiveWorkbook.Worksheets("Sheet1").Range("A8")
-	CopycellSecurityT2ActiveWorkbook.Worksheets("Sheet1").Range("B8")
-	CopycellServicesT1 ActiveWorkbook.Worksheets("Sheet1").Range("A9")
-	CopycellServicesT2 ActiveWorkbook.Worksheets("Sheet1").Range("B9")
-	CopycellTeamHeathrowT1 ActiveWorkbook.Worksheets("Sheet1").Range("A10")
-	CopycellTeamHeathrowT2 ActiveWorkbook.Worksheets("Sheet1").Range("B10")
-
+        CopycellPerformanceT1 ActiveWorkbook.Worksheets("Sheet1").Range("A2")
+        CopycellPerformanceT2 ActiveWorkbook.Worksheets("Sheet1").Range("C2")
+        CopycellPerformanceT3 ActiveWorkbook.Worksheets("Sheet1").Range("B2")
+        CopycellSummaryT1 ActiveWorkbook.Worksheets("Sheet1").Range("A3")
+        CopycellSummaryT2 ActiveWorkbook.Worksheets("Sheet1").Range("D3")
+        CopycellSummaryT3 ActiveWorkbook.Worksheets("Sheet1").Range("B3")
+        CopycellAirportOperationsT1 ActiveWorkbook.Worksheets("Sheet1").Range("A4")
+        CopycellAirportOperationsT2 ActiveWorkbook.Worksheets("Sheet1").Range("C4")
+        CopycellAirportOperationsT3 ActiveWorkbook.Worksheets("Sheet1").Range("B4")
+        CopycellEngineeringandBaggageT1 ActiveWorkbook.Worksheets("Sheet1").Range("A5")
+        CopycellEngineeringandBaggageT2 ActiveWorkbook.Worksheets("Sheet1").Range("C5")
+        CopycellEngineeringandBaggageT3 ActiveWorkbook.Worksheets("Sheet1").Range("B5")
+        CopycellOpsPlanningT1 ActiveWorkbook.Worksheets("Sheet1").Range("A6")
+        CopycellOpsPlanningT2 ActiveWorkbook.Worksheets("Sheet1").Range("C6")
+        CopycellOpsPlanningT3 ActiveWorkbook.Worksheets("Sheet1").Range("B6")
+        CopycellCOODirectorateT1 ActiveWorkbook.Worksheets("Sheet1").Range("A7")
+        CopycellCOODirectorateT2 ActiveWorkbook.Worksheets("Sheet1").Range("C7")
+        CopycellCOODirectorateT3 ActiveWorkbook.Worksheets("Sheet1").Range("B7")
+        CopycellSecurityT1 ActiveWorkbook.Worksheets("Sheet1").Range("A8")
+        CopycellSecurityT2 ActiveWorkbook.Worksheets("Sheet1").Range("C8")
+        CopycellSecurityT3 ActiveWorkbook.Worksheets("Sheet1").Range("B8")
+        CopycellServicesT1 ActiveWorkbook.Worksheets("Sheet1").Range("A9")
+        CopycellServicesT2 ActiveWorkbook.Worksheets("Sheet1").Range("C9")
+        CopycellServicesT3 ActiveWorkbook.Worksheets("Sheet1").Range("B9")
+        CopycellTeamHeathrowT1 ActiveWorkbook.Worksheets("Sheet1").Range("A10")
+        CopycellTeamHeathrowT2 ActiveWorkbook.Worksheets("Sheet1").Range("C10")
+        CopycellTeamHeathrowT3 ActiveWorkbook.Worksheets("Sheet1").Range("B10")
+        
         lastrow = ActiveWorkbook.Worksheets("Sheet1").Range("A" & ActiveWorkbook.Worksheets("Sheet1").Rows.Count).End(xlUp).Offset(0).Row
         While ActiveWorkbook.Worksheets("Sheet1").Cells(lastrow, 1).Value = ""
             lastrow = lastrow - 1
@@ -62,6 +72,10 @@ Sub ExcelToHTML()
     Loop
 
     Application.ScreenUpdating = False
+
+    WS.Range("A2:A10").NumberFormat = "General"
+    WS.Range("A2:A10").Value = WS.Range("A2:A10").Value
+    WS.Range("A2:A10").NumberFormat = "mmm-yy"
 
 
 'Insert Function fnConvert2HTML into E1 cell of Sheet1
@@ -89,7 +103,6 @@ Sub ExcelToHTML()
     Range("F1:F" & lastrow).Copy
     Range("F1").PasteSpecial Paste:=xlPasteValues
     Range("F1:F" & lastrow).Replace What:="<br><br>", Replacement:="</p><p>"
-
     
     Dim wbSource As Workbook
     Dim wbDestination As Workbook
@@ -106,11 +119,26 @@ Sub ExcelToHTML()
     
     wbSource.Worksheets("Sheet1").Range("E:F").Copy _
     wbDestination.Worksheets("FAW Upload - Operations").Range("C:D")
+
+    Set rng = wbDestination.Worksheets("FAW Upload - Operations").Range("A2:A10")
+
+    For Each cell In rng
+        If IsDate(cell.Value) Then
+            cell.Value = Format(cell.Value, "mmm-yy")
+        End If
+    Next cell
+    
+    
+    rng.NumberFormat = "mmm-yy"
+
     
     wbDestination.Close (True)
 
 
+
+
 End Sub
+
 
 Function fnConvert2HTML(myCell As Range) As String
     Dim bldTagOn, itlTagOn, ulnTagOn, colTagOn As Boolean
@@ -232,25 +260,23 @@ End Function
 
 Private Sub CopycellPerformanceT1(cell As Range)
     Dim textrange As TextRange2, tbox1 As Shape, fontType As Font2, cellfont As Font
-    Set tbox1 = Worksheets("Total Ops - Perfomance").Shapes("Textbox 1"): Set textrange = tbox1.TextFrame2.textrange
+    Set tbox1 = Worksheets("Total Ops - Performance").Shapes("Textbox 1"): Set textrange = tbox1.TextFrame2.textrange
     cell.Value = textrange.Characters.Text
-    For i = 1 To Len(cell.Value)
-        Set fontType = textrange.Characters(i, 1).Font
-        Set cellfont = cell.Characters(i, 1).Font
-        With fontType
-            cellfont.Bold = IIf(.Bold, True, 0)                     'add bold/
-            cellfont.Italic = IIf(.Italic, True, 0)                 'add italic/
-            cellfont.Underline = IIf(.UnderlineStyle > 0, 2, -4142) 'add underline/
-            cellfont.Color = textrange.Characters(i, 1).Font.Fill.ForeColor.RGB 'add Font color
-            cellfont.Size = .Size
-        End With
-    Next i 
+    
+End Sub
+
+
+Private Sub CopycellPerformanceT3(cell As Range)
+    Dim textrange As TextRange2, tbox1 As Shape, fontType As Font2, cellfont As Font
+    Set tbox1 = Worksheets("Total Ops - Performance").Shapes("Textbox 3"): Set textrange = tbox1.TextFrame2.textrange
+    cell.Value = textrange.Characters.Text
+    
 End Sub
 
 
 Private Sub CopycellPerformanceT2(cell As Range)
     Dim textrange As TextRange2, tbox1 As Shape, fontType As Font2, cellfont As Font
-    Set tbox1 = Worksheets("Total Ops - Perfomance").Shapes("Textbox 2"): Set textrange = tbox1.TextFrame2.textrange
+    Set tbox1 = Worksheets("Total Ops - Performance").Shapes("Textbox 2"): Set textrange = tbox1.TextFrame2.textrange
     cell.Value = textrange.Characters.Text
     For i = 1 To Len(cell.Value)
         Set fontType = textrange.Characters(i, 1).Font
@@ -262,24 +288,21 @@ Private Sub CopycellPerformanceT2(cell As Range)
             cellfont.Color = textrange.Characters(i, 1).Font.Fill.ForeColor.RGB 'add Font color
             cellfont.Size = .Size
         End With
-    Next i 
+    Next i
 End Sub
 
 Private Sub CopycellSummaryT1(cell As Range)
     Dim textrange As TextRange2, tbox1 As Shape, fontType As Font2, cellfont As Font
     Set tbox1 = Worksheets("Total Ops - Summary").Shapes("Textbox 1"): Set textrange = tbox1.TextFrame2.textrange
     cell.Value = textrange.Characters.Text
-    For i = 1 To Len(cell.Value)
-        Set fontType = textrange.Characters(i, 1).Font
-        Set cellfont = cell.Characters(i, 1).Font
-        With fontType
-            cellfont.Bold = IIf(.Bold, True, 0)                     'add bold/
-            cellfont.Italic = IIf(.Italic, True, 0)                 'add italic/
-            cellfont.Underline = IIf(.UnderlineStyle > 0, 2, -4142) 'add underline/
-            cellfont.Color = textrange.Characters(i, 1).Font.Fill.ForeColor.RGB 'add Font color
-            cellfont.Size = .Size
-        End With
-    Next i 
+    
+End Sub
+
+Private Sub CopycellSummaryT3(cell As Range)
+    Dim textrange As TextRange2, tbox1 As Shape, fontType As Font2, cellfont As Font
+    Set tbox1 = Worksheets("Total Ops - Summary").Shapes("Textbox 3"): Set textrange = tbox1.TextFrame2.textrange
+    cell.Value = textrange.Characters.Text
+    
 End Sub
 
 Private Sub CopycellSummaryT2(cell As Range)
@@ -296,24 +319,21 @@ Private Sub CopycellSummaryT2(cell As Range)
             cellfont.Color = textrange.Characters(i, 1).Font.Fill.ForeColor.RGB 'add Font color
             cellfont.Size = .Size
         End With
-    Next i 
+    Next i
 End Sub
 
 Private Sub CopycellAirportOperationsT1(cell As Range)
     Dim textrange As TextRange2, tbox1 As Shape, fontType As Font2, cellfont As Font
     Set tbox1 = Worksheets("Airport Operations").Shapes("Textbox 1"): Set textrange = tbox1.TextFrame2.textrange
     cell.Value = textrange.Characters.Text
-    For i = 1 To Len(cell.Value)
-        Set fontType = textrange.Characters(i, 1).Font
-        Set cellfont = cell.Characters(i, 1).Font
-        With fontType
-            cellfont.Bold = IIf(.Bold, True, 0)                     'add bold/
-            cellfont.Italic = IIf(.Italic, True, 0)                 'add italic/
-            cellfont.Underline = IIf(.UnderlineStyle > 0, 2, -4142) 'add underline/
-            cellfont.Color = textrange.Characters(i, 1).Font.Fill.ForeColor.RGB 'add Font color
-            cellfont.Size = .Size
-        End With
-    Next i 
+    
+End Sub
+
+Private Sub CopycellAirportOperationsT3(cell As Range)
+    Dim textrange As TextRange2, tbox1 As Shape, fontType As Font2, cellfont As Font
+    Set tbox1 = Worksheets("Airport Operations").Shapes("Textbox 3"): Set textrange = tbox1.TextFrame2.textrange
+    cell.Value = textrange.Characters.Text
+    
 End Sub
 
 Private Sub CopycellAirportOperationsT2(cell As Range)
@@ -330,24 +350,20 @@ Private Sub CopycellAirportOperationsT2(cell As Range)
             cellfont.Color = textrange.Characters(i, 1).Font.Fill.ForeColor.RGB 'add Font color
             cellfont.Size = .Size
         End With
-    Next i 
+    Next i
 End Sub
 
 Private Sub CopycellEngineeringandBaggageT1(cell As Range)
     Dim textrange As TextRange2, tbox1 As Shape, fontType As Font2, cellfont As Font
     Set tbox1 = Worksheets("Engineering and Baggage").Shapes("Textbox 1"): Set textrange = tbox1.TextFrame2.textrange
     cell.Value = textrange.Characters.Text
-    For i = 1 To Len(cell.Value)
-        Set fontType = textrange.Characters(i, 1).Font
-        Set cellfont = cell.Characters(i, 1).Font
-        With fontType
-            cellfont.Bold = IIf(.Bold, True, 0)                     'add bold/
-            cellfont.Italic = IIf(.Italic, True, 0)                 'add italic/
-            cellfont.Underline = IIf(.UnderlineStyle > 0, 2, -4142) 'add underline/
-            cellfont.Color = textrange.Characters(i, 1).Font.Fill.ForeColor.RGB 'add Font color
-            cellfont.Size = .Size
-        End With
-    Next i 
+    
+End Sub
+Private Sub CopycellEngineeringandBaggageT3(cell As Range)
+    Dim textrange As TextRange2, tbox1 As Shape, fontType As Font2, cellfont As Font
+    Set tbox1 = Worksheets("Engineering and Baggage").Shapes("Textbox 3"): Set textrange = tbox1.TextFrame2.textrange
+    cell.Value = textrange.Characters.Text
+    
 End Sub
 
 Private Sub CopycellEngineeringandBaggageT2(cell As Range)
@@ -364,24 +380,21 @@ Private Sub CopycellEngineeringandBaggageT2(cell As Range)
             cellfont.Color = textrange.Characters(i, 1).Font.Fill.ForeColor.RGB 'add Font color
             cellfont.Size = .Size
         End With
-    Next i 
+    Next i
 End Sub
 
 Private Sub CopycellOpsPlanningT1(cell As Range)
     Dim textrange As TextRange2, tbox1 As Shape, fontType As Font2, cellfont As Font
     Set tbox1 = Worksheets("Ops Planning").Shapes("Textbox 1"): Set textrange = tbox1.TextFrame2.textrange
     cell.Value = textrange.Characters.Text
-    For i = 1 To Len(cell.Value)
-        Set fontType = textrange.Characters(i, 1).Font
-        Set cellfont = cell.Characters(i, 1).Font
-        With fontType
-            cellfont.Bold = IIf(.Bold, True, 0)                     'add bold/
-            cellfont.Italic = IIf(.Italic, True, 0)                 'add italic/
-            cellfont.Underline = IIf(.UnderlineStyle > 0, 2, -4142) 'add underline/
-            cellfont.Color = textrange.Characters(i, 1).Font.Fill.ForeColor.RGB 'add Font color
-            cellfont.Size = .Size
-        End With
-    Next i 
+    
+End Sub
+
+Private Sub CopycellOpsPlanningT3(cell As Range)
+    Dim textrange As TextRange2, tbox1 As Shape, fontType As Font2, cellfont As Font
+    Set tbox1 = Worksheets("Ops Planning").Shapes("Textbox 3"): Set textrange = tbox1.TextFrame2.textrange
+    cell.Value = textrange.Characters.Text
+    
 End Sub
 
 Private Sub CopycellOpsPlanningT2(cell As Range)
@@ -398,26 +411,20 @@ Private Sub CopycellOpsPlanningT2(cell As Range)
             cellfont.Color = textrange.Characters(i, 1).Font.Fill.ForeColor.RGB 'add Font color
             cellfont.Size = .Size
         End With
-    Next i 
+    Next i
 End Sub
 
 Private Sub CopycellCOODirectorateT1(cell As Range)
     Dim textrange As TextRange2, tbox1 As Shape, fontType As Font2, cellfont As Font
     Set tbox1 = Worksheets("COO Directorate").Shapes("Textbox 1"): Set textrange = tbox1.TextFrame2.textrange
     cell.Value = textrange.Characters.Text
-    For i = 1 To Len(cell.Value)
-        Set fontType = textrange.Characters(i, 1).Font
-        Set cellfont = cell.Characters(i, 1).Font
-        With fontType
-            cellfont.Bold = IIf(.Bold, True, 0)                     'add bold/
-            cellfont.Italic = IIf(.Italic, True, 0)                 'add italic/
-            cellfont.Underline = IIf(.UnderlineStyle > 0, 2, -4142) 'add underline/
-            cellfont.Color = textrange.Characters(i, 1).Font.Fill.ForeColor.RGB 'add Font color
-            cellfont.Size = .Size
-        End With
-    Next i 
 End Sub
 
+Private Sub CopycellCOODirectorateT3(cell As Range)
+    Dim textrange As TextRange2, tbox1 As Shape, fontType As Font2, cellfont As Font
+    Set tbox1 = Worksheets("COO Directorate").Shapes("Textbox 3"): Set textrange = tbox1.TextFrame2.textrange
+    cell.Value = textrange.Characters.Text
+End Sub
 
 Private Sub CopycellCOODirectorateT2(cell As Range)
     Dim textrange As TextRange2, tbox1 As Shape, fontType As Font2, cellfont As Font
@@ -433,24 +440,21 @@ Private Sub CopycellCOODirectorateT2(cell As Range)
             cellfont.Color = textrange.Characters(i, 1).Font.Fill.ForeColor.RGB 'add Font color
             cellfont.Size = .Size
         End With
-    Next i 
+    Next i
 End Sub
 
 Private Sub CopycellSecurityT1(cell As Range)
     Dim textrange As TextRange2, tbox1 As Shape, fontType As Font2, cellfont As Font
     Set tbox1 = Worksheets("Security").Shapes("Textbox 1"): Set textrange = tbox1.TextFrame2.textrange
     cell.Value = textrange.Characters.Text
-    For i = 1 To Len(cell.Value)
-        Set fontType = textrange.Characters(i, 1).Font
-        Set cellfont = cell.Characters(i, 1).Font
-        With fontType
-            cellfont.Bold = IIf(.Bold, True, 0)                     'add bold/
-            cellfont.Italic = IIf(.Italic, True, 0)                 'add italic/
-            cellfont.Underline = IIf(.UnderlineStyle > 0, 2, -4142) 'add underline/
-            cellfont.Color = textrange.Characters(i, 1).Font.Fill.ForeColor.RGB 'add Font color
-            cellfont.Size = .Size
-        End With
-    Next i 
+    
+End Sub
+
+Private Sub CopycellSecurityT3(cell As Range)
+    Dim textrange As TextRange2, tbox1 As Shape, fontType As Font2, cellfont As Font
+    Set tbox1 = Worksheets("Security").Shapes("Textbox 3"): Set textrange = tbox1.TextFrame2.textrange
+    cell.Value = textrange.Characters.Text
+    
 End Sub
 
 Private Sub CopycellSecurityT2(cell As Range)
@@ -467,24 +471,21 @@ Private Sub CopycellSecurityT2(cell As Range)
             cellfont.Color = textrange.Characters(i, 1).Font.Fill.ForeColor.RGB 'add Font color
             cellfont.Size = .Size
         End With
-    Next i 
+    Next i
 End Sub
 
 Private Sub CopycellServicesT1(cell As Range)
     Dim textrange As TextRange2, tbox1 As Shape, fontType As Font2, cellfont As Font
     Set tbox1 = Worksheets("Services").Shapes("Textbox 1"): Set textrange = tbox1.TextFrame2.textrange
     cell.Value = textrange.Characters.Text
-    For i = 1 To Len(cell.Value)
-        Set fontType = textrange.Characters(i, 1).Font
-        Set cellfont = cell.Characters(i, 1).Font
-        With fontType
-            cellfont.Bold = IIf(.Bold, True, 0)                     'add bold/
-            cellfont.Italic = IIf(.Italic, True, 0)                 'add italic/
-            cellfont.Underline = IIf(.UnderlineStyle > 0, 2, -4142) 'add underline/
-            cellfont.Color = textrange.Characters(i, 1).Font.Fill.ForeColor.RGB 'add Font color
-            cellfont.Size = .Size
-        End With
-    Next i 
+    
+End Sub
+
+Private Sub CopycellServicesT3(cell As Range)
+    Dim textrange As TextRange2, tbox1 As Shape, fontType As Font2, cellfont As Font
+    Set tbox1 = Worksheets("Services").Shapes("Textbox 3"): Set textrange = tbox1.TextFrame2.textrange
+    cell.Value = textrange.Characters.Text
+    
 End Sub
 
 Private Sub CopycellServicesT2(cell As Range)
@@ -501,27 +502,20 @@ Private Sub CopycellServicesT2(cell As Range)
             cellfont.Color = textrange.Characters(i, 1).Font.Fill.ForeColor.RGB 'add Font color
             cellfont.Size = .Size
         End With
-    Next i 
+    Next i
 End Sub
-
 
 Private Sub CopycellTeamHeathrowT1(cell As Range)
     Dim textrange As TextRange2, tbox1 As Shape, fontType As Font2, cellfont As Font
     Set tbox1 = Worksheets("Team Heathrow").Shapes("Textbox 1"): Set textrange = tbox1.TextFrame2.textrange
     cell.Value = textrange.Characters.Text
-    For i = 1 To Len(cell.Value)
-        Set fontType = textrange.Characters(i, 1).Font
-        Set cellfont = cell.Characters(i, 1).Font
-        With fontType
-            cellfont.Bold = IIf(.Bold, True, 0)                     'add bold/
-            cellfont.Italic = IIf(.Italic, True, 0)                 'add italic/
-            cellfont.Underline = IIf(.UnderlineStyle > 0, 2, -4142) 'add underline/
-            cellfont.Color = textrange.Characters(i, 1).Font.Fill.ForeColor.RGB 'add Font color
-            cellfont.Size = .Size
-        End With
-    Next i 
 End Sub
 
+Private Sub CopycellTeamHeathrowT3(cell As Range)
+    Dim textrange As TextRange2, tbox1 As Shape, fontType As Font2, cellfont As Font
+    Set tbox1 = Worksheets("Team Heathrow").Shapes("Textbox 3"): Set textrange = tbox1.TextFrame2.textrange
+    cell.Value = textrange.Characters.Text
+End Sub
 
 Private Sub CopycellTeamHeathrowT2(cell As Range)
     Dim textrange As TextRange2, tbox1 As Shape, fontType As Font2, cellfont As Font
@@ -537,5 +531,5 @@ Private Sub CopycellTeamHeathrowT2(cell As Range)
             cellfont.Color = textrange.Characters(i, 1).Font.Fill.ForeColor.RGB 'add Font color
             cellfont.Size = .Size
         End With
-    Next i 
+    Next i
 End Sub
