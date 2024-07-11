@@ -1,4 +1,6 @@
 
+
+
 Sub ExcelToHTML()
     
     Dim myPath As String
@@ -29,17 +31,17 @@ Sub ExcelToHTML()
     myPath = "C:\Users\" & UserName & "\Heathrow Airport Ltd\Business Services, Business Intelligence - BI Reporting\FAW\Finance\Dynamic Commentary\Finance Commentary\02. Commercial\Source Data Files\"
     myFile = Dir(myPath)
     i = WS.Range("A" & WS.Rows.Count).End(xlUp).Offset(1).Row
-
-
+    
     Do While myFile <> ""
     
         Workbooks.Open Filename:=myPath & myFile
-        CopycellFromTextbox ActiveWorkbook.Worksheets("Sheet1").Range("B2"), "Revenue Performance Summary"
-        CopycellFromTextbox ActiveWorkbook.Worksheets("Sheet1").Range("C2"), "Commercial Opex Summary" 
-        CopycellFromTextbox ActiveWorkbook.Worksheets("Sheet1").Range("D2"), "Revenue Breakdown"
-        CopycellFromTextbox ActiveWorkbook.Worksheets("Sheet1").Range("E2"), "Revenue R&Os vs. MBP 2024-26"
-        CopycellFromTextbox ActiveWorkbook.Worksheets("Sheet1").Range("F2"), "Opex R&Os vs. MBP 2024-26"
-        ActiveWorkbook.Worksheets("Sheet1").Range("A2").Value= ActiveWorkbook.Worksheets("Revenue Performance Summary").Range("B6").Value
+
+    CopycellRevenuePerformanceSummaryT1 ActiveWorkbook.Worksheets("Sheet1").Range("A2")
+    CopycellRevenuePerformanceSummaryT2 ActiveWorkbook.Worksheets("Sheet1").Range("B2")
+        CopycellCommercialOpexSummary ActiveWorkbook.Worksheets("Sheet1").Range("C2")
+        CopycellRevenueBreakdown ActiveWorkbook.Worksheets("Sheet1").Range("D2")
+        CopycellRevenueROvsMBP ActiveWorkbook.Worksheets("Sheet1").Range("E2")
+        CopycellOpexROvsMBP ActiveWorkbook.Worksheets("Sheet1").Range("F2")
 
         lastrow = ActiveWorkbook.Worksheets("Sheet1").Range("A" & ActiveWorkbook.Worksheets("Sheet1").Rows.Count).End(xlUp).Offset(0).Row
         While ActiveWorkbook.Worksheets("Sheet1").Cells(lastrow, 1).Value = ""
@@ -264,10 +266,62 @@ Function fnGetCol(strCol As String) As String
     fnGetCol = rVal & gVal & bVal
 End Function
 
-
-Private Sub CopycellFromTextbox(cell As Range, sheetName as String)
+Private Sub CopycellRevenuePerformanceSummaryT1(cell As Range)
     Dim textrange As TextRange2, tbox1 As Shape, fontType As Font2, cellfont As Font
-    Set tbox1 = Worksheets(sheetName).Shapes("TextBox 2"): Set textrange = tbox1.TextFrame2.textrange
+    Set tbox1 = Worksheets("Revenue Performance Summary").Shapes("Textbox 1"): Set textrange = tbox1.TextFrame2.textrange
+    cell.Value = textrange.Characters.Text
+    For i = 1 To Len(cell.Value)
+        Set fontType = textrange.Characters(i, 1).Font
+        Set cellfont = cell.Characters(i, 1).Font
+        With fontType
+            cellfont.Bold = IIf(.Bold, True, 0)                     'add bold/
+            cellfont.Italic = IIf(.Italic, True, 0)                 'add italic/
+            cellfont.Underline = IIf(.UnderlineStyle > 0, 2, -4142) 'add underline/
+            cellfont.Color = textrange.Characters(i, 1).Font.Fill.ForeColor.RGB 'add Font color
+            cellfont.Size = .Size
+        End With
+    Next i
+End Sub
+
+Private Sub CopycellRevenuePerformanceSummaryT2(cell As Range)
+    Dim textrange As TextRange2, tbox1 As Shape, fontType As Font2, cellfont As Font
+    Set tbox1 = Worksheets("Revenue Performance Summary").Shapes("Textbox 2"): Set textrange = tbox1.TextFrame2.textrange
+    cell.Value = textrange.Characters.Text
+    For i = 1 To Len(cell.Value)
+        Set fontType = textrange.Characters(i, 1).Font
+        Set cellfont = cell.Characters(i, 1).Font
+        With fontType
+            cellfont.Bold = IIf(.Bold, True, 0)                     'add bold/
+            cellfont.Italic = IIf(.Italic, True, 0)                 'add italic/
+            cellfont.Underline = IIf(.UnderlineStyle > 0, 2, -4142) 'add underline/
+            cellfont.Color = textrange.Characters(i, 1).Font.Fill.ForeColor.RGB 'add Font color
+            cellfont.Size = .Size
+        End With
+    Next i
+End Sub
+
+
+Private Sub CopycellCommercialOpexSummary(cell As Range)
+    Dim textrange As TextRange2, tbox1 As Shape, fontType As Font2, cellfont As Font
+    Set tbox1 = Worksheets("Commercial Opex Summary").Shapes("Textbox 2"): Set textrange = tbox1.TextFrame2.textrange
+    cell.Value = textrange.Characters.Text
+    For i = 1 To Len(cell.Value)
+        Set fontType = textrange.Characters(i, 1).Font
+        Set cellfont = cell.Characters(i, 1).Font
+        With fontType
+            cellfont.Bold = IIf(.Bold, True, 0)                     'add bold/
+            cellfont.Italic = IIf(.Italic, True, 0)                 'add italic/
+            cellfont.Underline = IIf(.UnderlineStyle > 0, 2, -4142) 'add underline/
+            cellfont.Color = textrange.Characters(i, 1).Font.Fill.ForeColor.RGB 'add Font color
+            cellfont.Size = .Size
+        End With
+    Next i
+End Sub
+
+
+Private Sub CopycellRevenueBreakdown(cell As Range)
+    Dim textrange As TextRange2, tbox1 As Shape, fontType As Font2, cellfont As Font
+    Set tbox1 = Worksheets("Revenue Breakdown").Shapes("Textbox 2"): Set textrange = tbox1.TextFrame2.textrange
     cell.Value = textrange.Characters.Text
     For i = 1 To Len(cell.Value)
         Set fontType = textrange.Characters(i, 1).Font
@@ -284,3 +338,37 @@ End Sub
 
 
 
+Private Sub CopycellRevenueROvsMBP(cell As Range)
+    Dim textrange As TextRange2, tbox1 As Shape, fontType As Font2, cellfont As Font
+    Set tbox1 = Worksheets("Revenue R&Os vs. MBP 2024-26").Shapes("Textbox 2"): Set textrange = tbox1.TextFrame2.textrange
+    cell.Value = textrange.Characters.Text
+    For i = 1 To Len(cell.Value)
+        Set fontType = textrange.Characters(i, 1).Font
+        Set cellfont = cell.Characters(i, 1).Font
+        With fontType
+            cellfont.Bold = IIf(.Bold, True, 0)                     'add bold/
+            cellfont.Italic = IIf(.Italic, True, 0)                 'add italic/
+            cellfont.Underline = IIf(.UnderlineStyle > 0, 2, -4142) 'add underline/
+            cellfont.Color = textrange.Characters(i, 1).Font.Fill.ForeColor.RGB 'add Font color
+            cellfont.Size = .Size
+        End With
+    Next i
+End Sub
+
+
+Private Sub CopycellOpexROvsMBP(cell As Range)
+    Dim textrange As TextRange2, tbox1 As Shape, fontType As Font2, cellfont As Font
+    Set tbox1 = Worksheets("Opex R&Os vs. MBP 2024-26").Shapes("Textbox 2"): Set textrange = tbox1.TextFrame2.textrange
+    cell.Value = textrange.Characters.Text
+    For i = 1 To Len(cell.Value)
+        Set fontType = textrange.Characters(i, 1).Font
+        Set cellfont = cell.Characters(i, 1).Font
+        With fontType
+            cellfont.Bold = IIf(.Bold, True, 0)                     'add bold/
+            cellfont.Italic = IIf(.Italic, True, 0)                 'add italic/
+            cellfont.Underline = IIf(.UnderlineStyle > 0, 2, -4142) 'add underline/
+            cellfont.Color = textrange.Characters(i, 1).Font.Fill.ForeColor.RGB 'add Font color
+            cellfont.Size = .Size
+        End With
+    Next i
+End Sub

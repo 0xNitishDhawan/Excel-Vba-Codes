@@ -31,10 +31,9 @@ Sub ExcelToHTML()
         .Cells(1, 19) = "Team Heathrow"
     End With
     
-    
-    UserName = Environ("UserName")
-    myPath = "C:\Users\" & UserName & "\Heathrow Airport Ltd\Business Services, Business Intelligence - BI Reporting\FAW\Finance\Dynamic Commentary\Finance Commentary\03. Operations\Source Data Files\"
+    myPath = "C:\Users\Nitish Dhawan\OneDrive - BENNETT UNIVERSITY\Desktop\MacroFiles\"
     myFile = Dir(myPath)
+    
     i = WS.Range("A" & WS.Rows.Count).End(xlUp).Offset(1).Row
     
     Do While myFile <> ""
@@ -183,7 +182,7 @@ Sub ExcelToHTML()
     Dim masterNextRow As Long
     
     Set wbSource = ThisWorkbook
-    Set wbDestination = Workbooks.Open("C:\Users\" & UserName & "\Heathrow Airport Ltd\Business Services, Business Intelligence - BI Reporting\FAW\Finance\Dynamic Commentary\Finance Commentary\03. Operations\Output File to Upload\FAW Upload - Operations.csv")
+    Set wbDestination = Workbooks.Open("C:\Users\Nitish Dhawan\OneDrive - BENNETT UNIVERSITY\Desktop\Source.xlsx")
 
     masterNextRow = wbDestination.Worksheets("FAW Upload - Operations").Range("A" & wbDestination.Worksheets("FAW Upload - Operations").Rows.Count).End(xlUp).Offset(1).Row
     
@@ -331,3 +330,4 @@ Private Sub CopycellFromTextbox(cell As Range, sheetName As String)
         End With
     Next i
 End Sub
+
