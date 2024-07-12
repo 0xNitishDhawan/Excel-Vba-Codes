@@ -1,0 +1,255 @@
+Sub ExcelToHTMLSol()
+    
+    Dim myPath As String
+    Dim myFile, SR, DR As String
+    Dim WS As Worksheet
+    Dim i As Integer
+    Dim lastrow As Long
+    Dim rng As Range
+    
+    Set WS = ThisWorkbook.Sheets("Sheet1")
+    
+    With WS
+        .Cells.ClearContents
+        .Cells(1, 1) = "Fiscal Period"
+        .Cells(1, 2) = "Business Unit"
+        .Cells(1, 3) = "Performance"
+        .Cells(1, 4) = "Summary"
+        .Cells(1, 5) = "Performance"
+        .Cells(1, 6) = "Summary"
+    End With
+    
+    
+   UserName = Environ("UserName")
+    ' myPath = "C:\Users\" & UserName & "\Heathrow Airport Ltd\Business Services, Business Intelligence - BI Reporting\FAW\Finance\Dynamic Commentary\Finance Commentary\04. Solutions\Source Data Files\"
+    myPath = "C:\Users\Nitish Dhawan\OneDrive - BENNETT UNIVERSITY\Desktop\MacroFiles\"
+    myFile = Dir(myPath)
+    i = WS.Range("A" & WS.Rows.Count).End(xlUp).Offset(1).Row
+    
+    Do While myFile <> ""
+    
+        Workbooks.Open Filename:=myPath & myFile
+
+        CopycellFromTextbox ActiveWorkbook.Worksheets("Sheet1").Range("D2"), " Summary"
+        CopycellFromTextbox ActiveWorkbook.Worksheets("Sheet1").Range("C3"), "Solutions Performance"
+        CopycellFromTextbox ActiveWorkbook.Worksheets("Sheet1").Range("C4"), "Support Services Performance"
+
+        ActiveWorkbook.Worksheets("Sheet1").Range("A2").Value = ActiveWorkbook.Worksheets(" Summary").Range("B6").Value
+        ActiveWorkbook.Worksheets("Sheet1").Range("A3").Value = ActiveWorkbook.Worksheets("Solutions Performance").Range("B6").Value
+        ActiveWorkbook.Worksheets("Sheet1").Range("A4").Value = ActiveWorkbook.Worksheets("Support Services Performance").Range("B6").Value
+        ActiveWorkbook.Worksheets("Sheet1").Range("B2").Value = ActiveWorkbook.Worksheets(" Summary").Range("E1").Value
+        ActiveWorkbook.Worksheets("Sheet1").Range("B3").Value = ActiveWorkbook.Worksheets("Solutions Performance").Range("E1").Value
+        ActiveWorkbook.Worksheets("Sheet1").Range("B4").Value = ActiveWorkbook.Worksheets("Support Services Performance").Range("E1").Value
+
+        lastrow = ActiveWorkbook.Worksheets("Sheet1").Range("A" & ActiveWorkbook.Worksheets("Sheet1").Rows.Count).End(xlUp).Offset(0).Row
+        While ActiveWorkbook.Worksheets("Sheet1").Cells(lastrow, 1).Value = ""
+            lastrow = lastrow - 1
+        Wend
+        
+        SR = "A2:D" & lastrow
+        DR = "A" & i & ":D" & i + lastrow - 2
+        ActiveWorkbook.Worksheets("Sheet1").Range(SR).Copy WS.Range(DR)
+        i = i + lastrow - 1
+        ActiveWorkbook.Close savechanges:=False
+        myFile = Dir
+    Loop
+
+
+'Insert Function fnConvert2HTML into E1 cell of Sheet1
+    Sheets("Sheet1").Select
+    Range("E2").FormulaLocal = "=fnConvert2HTML(C2)"
+    lastrow = Range("C" & Rows.Count).End(xlUp).Row
+    For i = 2 To lastrow
+        Range("E" & i).Select
+        ActiveCell.FormulaR1C1 = "=@fnConvert2HTML(RC[-2])"
+    Next
+    Range("E1:E" & lastrow).Copy
+    Range("E1").PasteSpecial Paste:=xlPasteValues
+    Range("E1:E" & lastrow).Replace What:="<br><br>", Replacement:="</p><p>"
+
+
+
+'Insert Function fnConvert2HTML into F1 cell of Sheet1
+    Sheets("Sheet1").Select
+    Range("F2").FormulaLocal = "=fnConvert2HTML(D2)"
+    lastrow = Range("D" & Rows.Count).End(xlUp).Row
+    For i = 2 To lastrow
+        Range("F" & i).Select
+        ActiveCell.FormulaR1C1 = "=@fnConvert2HTML(RC[-2])"
+    Next
+    Range("F1:F" & lastrow).Copy
+    Range("F1").PasteSpecial Paste:=xlPasteValues
+    Range("F1:F" & lastrow).Replace What:="<br><br>", Replacement:="</p><p>"
+
+
+
+  
+     Dim wbSource As Workbook
+    Dim wbDestination As Workbook
+    Dim masterNextRow As Long
+    
+    Set wbSource = ThisWorkbook
+    ' Set wbDestination = Workbooks.Open("C:\Users\" & UserName & "\Heathrow Airport Ltd\Business Services, Business Intelligence - BI Reporting\FAW\Finance\Dynamic Commentary\Finance Commentary\04. Solutions\Output File to Upload\FAW Upload - Solutions.csv")
+    Set wbDestination = Workbooks.Open("C:\Users\Nitish Dhawan\OneDrive - BENNETT UNIVERSITY\Desktop\Source.xlsx")
+    
+    masterNextRow = wbDestination.Worksheets("FAW Upload - Solutions").Range("A" & wbDestination.Worksheets("FAW Upload - Solutions").Rows.Count).End(xlUp).Offset(1).Row
+    
+    wbSource.Worksheets("Sheet1").Range("A:B").Copy _
+    wbDestination.Worksheets("FAW Upload - Solutions").Range("A:B")
+    
+  wbSource.Worksheets("Sheet1").Range("E:F").Copy _
+    wbDestination.Worksheets("FAW Upload - Solutions").Range("C:D")
+
+    Set rng = wbDestination.Worksheets("FAW Upload - Solutions").Range("A2:A4")
+
+    For Each cell In rng
+        If IsDate(cell.Value) Then
+            cell.Value = Format(cell.Value, "mmm-yy")
+        End If
+    Next cell
+
+
+    rng.NumberFormat = "mmm-yy"
+    
+    wbDestination.Close (True)
+    
+    MsgBox "The Macro run is Completed!"
+
+End Sub
+
+Function fnConvert2HTML(myCell As Range) As String
+    Dim bldTagOn, itlTagOn, ulnTagOn, colTagOn As Boolean
+    Dim i, j, chrCount As Integer
+    Dim chrCol, chrLastCol, htmlTxt As String
+    j = 0
+    
+    bldTagOn = False
+    itlTagOn = False
+    ulnTagOn = False
+    colTagOn = False
+    htmlTxt = "<p>"
+    chrCol = "NONE"
+    chrCount = myCell.Characters.Count
+    
+    For i = 1 To chrCount
+        With myCell.Characters(i, 1)
+            If (.Font.Color) Then
+                chrCol = fnGetCol(.Font.Color)
+                If Not colTagOn Then
+                    htmlTxt = htmlTxt & "<font color=#" & chrCol & ">"
+                    colTagOn = True
+                Else
+                    If chrCol <> chrLastCol Then htmlTxt = htmlTxt & "</font><font color=#" & chrCol & ">"
+                End If
+            Else
+                chrCol = "NONE"
+                If colTagOn Then
+                    htmlTxt = htmlTxt & "</font>"
+                    colTagOn = False
+                End If
+            End If
+            chrLastCol = chrCol
+            
+            If .Font.Bold = True Then
+                If Not bldTagOn Then
+                    htmlTxt = htmlTxt & "<strong>"
+                    bldTagOn = True
+                End If
+            Else
+                If bldTagOn Then
+                    htmlTxt = htmlTxt & "</strong>"
+                    bldTagOn = False
+                End If
+            End If
+    
+            If .Font.Italic = True Then
+                If Not itlTagOn Then
+                    htmlTxt = htmlTxt & "<em>"
+                    itlTagOn = True
+                End If
+            Else
+                If itlTagOn Then
+                    htmlTxt = htmlTxt & "</em>"
+                    itlTagOn = False
+                End If
+            End If
+    
+            If .Font.Underline > 0 Then
+                If Not ulnTagOn Then
+                    htmlTxt = htmlTxt & "<u>"
+                    ulnTagOn = True
+                End If
+            Else
+                If ulnTagOn Then
+                    htmlTxt = htmlTxt & "</u>"
+                    ulnTagOn = False
+                End If
+            End If
+            
+            If (Asc(.Text) = 10) Then
+                htmlTxt = htmlTxt & "<br>"
+        j = 0
+            Else
+                htmlTxt = htmlTxt & .Text
+            End If
+        End With
+        If j > 300 And Mid(myCell.Value, i, 1) = " " Then
+         htmlTxt = htmlTxt & "<br>"
+            j = 0
+        Else
+            j = j + 1
+        End If
+    Next
+    
+    If colTagOn Then
+        htmlTxt = htmlTxt & "</font>"
+        colTagOn = False
+    End If
+    If bldTagOn Then
+        htmlTxt = htmlTxt & "</strong>"
+        bldTagOn = False
+    End If
+    If itlTagOn Then
+        htmlTxt = htmlTxt & "</em>"
+        itlTagOn = False
+    End If
+    If ulnTagOn Then
+        htmlTxt = htmlTxt & "</u>"
+        ulnTagOn = False
+    End If
+    htmlTxt = htmlTxt
+    fnConvert2HTML = htmlTxt & "</p>"
+     
+    If myCell.Value = "" Then
+        fnConvert2HTML = ""
+    End If
+    
+End Function
+
+Function fnGetCol(strCol As String) As String
+    Dim rVal, gVal, bVal As String
+    strCol = Right("000000" & Hex(strCol), 6)
+    bVal = Left(strCol, 2)
+    gVal = Mid(strCol, 3, 2)
+    rVal = Right(strCol, 2)
+    fnGetCol = rVal & gVal & bVal
+End Function
+
+
+Private Sub CopycellFromTextbox(cell As Range, sheetName As String)
+    Dim textrange As TextRange2, tbox1 As Shape, fontType As Font2, cellfont As Font
+    Set tbox1 = Worksheets(sheetName).Shapes("TextBox 2"): Set textrange = tbox1.TextFrame2.textrange
+    cell.Value = textrange.Characters.Text
+    For i = 1 To Len(cell.Value)
+        Set fontType = textrange.Characters(i, 1).Font
+        Set cellfont = cell.Characters(i, 1).Font
+        With fontType
+            cellfont.Bold = IIf(.Bold, True, 0)                     'add bold/
+            cellfont.Italic = IIf(.Italic, True, 0)                 'add italic/
+            cellfont.Underline = IIf(.UnderlineStyle > 0, 2, -4142) 'add underline/
+            cellfont.Color = textrange.Characters(i, 1).Font.Fill.ForeColor.RGB 'add Font color
+            cellfont.Size = .Size
+        End With
+    Next i
+End Sub
+
