@@ -1,0 +1,30 @@
+Sub FetchDataFromSharePointURL()
+    Dim sourceWorkbook As Workbook
+    Dim sourceSheet As Worksheet
+    Dim sourceRange As Range
+    Dim destinationSheet As Worksheet
+    Dim destinationRange As Range
+    Dim filePath As String
+
+    filePath = "https://heathrowportal.sharepoint.com/teams/BSC/BSCOps/BSCBDSM/Business%20Intelligence%20%20BI%20Reporting/FAW/Finance/Dynamic%20Commentary/Finance%20Commentary/01.%20Exec/Source%20Data%20Files/04%2024%20-%20Exec.xlsx"
+
+    On Error Resume Next
+    Set sourceWorkbook = Workbooks.Open(filePath)
+    On Error GoTo 0
+
+    If sourceWorkbook Is Nothing Then
+        MsgBox "The external file could not be opened.", vbExclamation
+        Exit Sub
+    End If
+
+    Set sourceSheet = sourceWorkbook.Sheets("Sheet1")
+    Set sourceRange = sourceSheet.Range("A5:B10")
+
+    Set destinationSheet = ThisWorkbook.Sheets("Sheet1")
+    Set destinationRange = destinationSheet.Range("A5:B10")
+
+    destinationRange.Copy sourceRange
+
+    MsgBox "Data has been fetched successfully!", vbInformation
+End Sub
+
