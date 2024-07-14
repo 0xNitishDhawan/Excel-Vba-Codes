@@ -20,5 +20,4 @@ Sub RunExecMacro()
 
     otherWorkbook.Close SaveChanges:=False
     
-      MsgBox "Output File is Ready to Use"
 End Sub

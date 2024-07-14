@@ -1,0 +1,56 @@
+Sub OpenAndOperateOnFiles()
+    Dim filePathBeg As String, filePathEnd As String, filePath As String
+    Dim sourceWorkbook As Workbook
+    Dim i As Integer
+    Dim ws As Worksheet
+    Set ws = ThisWorkbook.Sheets("Sheet1")
+    
+    ' Define the base URL and file name pattern
+    filePathBeg = "https://heathrowportal.sharepoint.com/teams/BSC/BSCOps/BSCBDSM/Business%20Intelligence%20%20BI%20Reporting/FAW/Finance/Dynamic%20Commentary/Finance%20Commentary/01.%20Exec/Source%20Data%20Files/"
+    filePathEnd = "%2024%20-%20Exec.xlsx"
+    
+    On Error Resume Next
+    
+    For i = 1 To 12
+        Set sourceWorkbook = Nothing
+        
+        ' Construct the full URL for each file
+        If i < 10 Then
+            filePath = filePathBeg & "0" & i & filePathEnd
+        Else
+            filePath = filePathBeg & i & filePathEnd
+        End If
+        
+        ' Check if the file exists
+        If UrlExists(filePath) Then
+            ' File exists, proceed to open it
+            Set sourceWorkbook = Workbooks.Open(filePath)
+            
+            If Not sourceWorkbook Is Nothing Then
+                ' Assuming you want to copy data from Sheet1, cell A1
+                ws.Cells(i, 1).Value = sourceWorkbook.Sheets(1).Cells(1, 1).Value
+                sourceWorkbook.Close False
+            End If
+        Else
+            ' File does not exist at the path
+            Debug.Print "File not found at: " & filePath
+        End If
+    Next i
+    
+    On Error GoTo 0 ' Reset error handling
+    
+    MsgBox "Operation completed.", vbInformation
+End Sub
+
+Function UrlExists(url As String) As Boolean
+    Dim request As Object
+    Set request = CreateObject("MSXML2.XMLHTTP")
+    
+    On Error Resume Next
+    request.Open "GET", url, False
+    request.send
+    UrlExists = (request.Status = 200)
+    
+    Set request = Nothing
+    On Error GoTo 0
+End Function

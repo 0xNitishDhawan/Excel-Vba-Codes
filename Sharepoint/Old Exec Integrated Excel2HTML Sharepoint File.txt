@@ -3,11 +3,10 @@ Sub ExcelToHTMLExec()
     Dim myPath As String
     Dim myFile, SR, DR As String
     Dim WS As Worksheet
-    Dim i As Integer, j As Integer
+    Dim i As Integer
     Dim lastrow As Long
     Dim sourceWorkbook As Workbook
     Dim filePath As String
-    Dim filePathBeg As String, filePathEnd As String
     
     Set WS = ThisWorkbook.Sheets("Sheet1")
     
@@ -28,49 +27,40 @@ Sub ExcelToHTMLExec()
         .Cells(1, 13) = "Opex"
     End With
     
-    filePathBeg = "https://heathrowportal.sharepoint.com/teams/BSC/BSCOps/BSCBDSM/Business%20Intelligence%20%20BI%20Reporting/FAW/Finance/Dynamic%20Commentary/Finance%20Commentary/01.%20Exec/Source%20Data%20Files/"
-    filePathEnd = "%2024%20-%20Exec.xlsx"
-
     i = WS.Range("A" & WS.Rows.Count).End(xlUp).Offset(1).row
-
-    On Error Resume Next
-    For j = 1 To 12
-        Set sourceWorkbook = Nothing
+    
+    'Do While myFile <> ""
+        filePath = "https://heathrowportal.sharepoint.com/teams/BSC/BSCOps/BSCBDSM/Business%20Intelligence%20%20BI%20Reporting/FAW/Finance/Dynamic%20Commentary/Finance%20Commentary/01.%20Exec/Source%20Data%20Files/04%2024%20-%20Exec.xlsx"
         
-        If j < 10 Then
-            filePath = filePathBeg & "0" & j & filePathEnd
-        Else
-            filePath = filePathBeg & j & filePathEnd
-        End If
-        
-        If UrlExists(filePath) Then
+        On Error Resume Next
             Set sourceWorkbook = Workbooks.Open(filePath)
-            
-            If Not sourceWorkbook Is Nothing Then     
-
-                CopycellFromTextbox sourceWorkbook.Worksheets("Sheet1").Range("B2"), "Exec Summary"
-                CopycellFromTextbox sourceWorkbook.Worksheets("Sheet1").Range("C2"), "Passengers"
-                CopycellFromTextbox sourceWorkbook.Worksheets("Sheet1").Range("D2"), "Capacity"
-                CopycellFromTextbox sourceWorkbook.Worksheets("Sheet1").Range("E2"), "People"
-                CopycellFromTextbox sourceWorkbook.Worksheets("Sheet1").Range("F2"), "Revenue"
-                CopycellFromTextbox sourceWorkbook.Worksheets("Sheet1").Range("G2"), "OPEX"
-                sourceWorkbook.Worksheets("Sheet1").Range("A2").Value = sourceWorkbook.Worksheets("Exec Summary").Range("B6").Value
-
-                lastrow = sourceWorkbook.Worksheets("Sheet1").Range("A" & sourceWorkbook.Worksheets("Sheet1").Rows.Count).End(xlUp).Offset(0).row
-                While sourceWorkbook.Worksheets("Sheet1").Cells(lastrow, 1).Value = ""
-                    lastrow = lastrow - 1
-                Wend
-                
-                SR = "A2:G" & lastrow
-                DR = "A" & i & ":G" & i + lastrow - 2
-                sourceWorkbook.Worksheets("Sheet1").Range(SR).Copy WS.Range(DR)
-                i = i + lastrow - 1
-                sourceWorkbook.Close savechanges:=False
-            End If
+        On Error GoTo 0
+        
+        If sourceWorkbook Is Nothing Then
+            MsgBox "The Source file could not be opened.", vbExclamation
+            Exit Sub
         End If
-    Next j
 
-    On Error GoTo 0 '
+        CopycellFromTextbox sourceWorkbook.Worksheets("Sheet1").Range("B2"), "Exec Summary"
+        CopycellFromTextbox sourceWorkbook.Worksheets("Sheet1").Range("C2"), "Passengers"
+        CopycellFromTextbox sourceWorkbook.Worksheets("Sheet1").Range("D2"), "Capacity"
+        CopycellFromTextbox sourceWorkbook.Worksheets("Sheet1").Range("E2"), "People"
+        CopycellFromTextbox sourceWorkbook.Worksheets("Sheet1").Range("F2"), "Revenue"
+        CopycellFromTextbox sourceWorkbook.Worksheets("Sheet1").Range("G2"), "OPEX"
+        sourceWorkbook.Worksheets("Sheet1").Range("A2").Value = sourceWorkbook.Worksheets("Exec Summary").Range("B6").Value
+
+        lastrow = sourceWorkbook.Worksheets("Sheet1").Range("A" & sourceWorkbook.Worksheets("Sheet1").Rows.Count).End(xlUp).Offset(0).row
+        While sourceWorkbook.Worksheets("Sheet1").Cells(lastrow, 1).Value = ""
+            lastrow = lastrow - 1
+        Wend
+        
+        SR = "A2:G" & lastrow
+        DR = "A" & i & ":G" & i + lastrow - 2
+        sourceWorkbook.Worksheets("Sheet1").Range(SR).Copy WS.Range(DR)
+        i = i + lastrow - 1
+        sourceWorkbook.Close savechanges:=False
+        myFile = Dir
+    'Loop
 
     Application.ScreenUpdating = False
 
@@ -171,7 +161,7 @@ Sub ExcelToHTMLExec()
     
     wbDestination.Close (True)
 
-    MsgBox "The code has run Successfully."
+
 End Sub
 
 Function fnConvert2HTML(myCell As Range, lineLength As Long) As String
@@ -290,19 +280,6 @@ Function fnGetCol(strCol As String) As String
     gVal = Mid(strCol, 3, 2)
     rVal = Right(strCol, 2)
     fnGetCol = rVal & gVal & bVal
-End Function
-
-Function UrlExists(url As String) As Boolean
-    Dim request As Object
-    Set request = CreateObject("MSXML2.XMLHTTP")
-    
-    On Error Resume Next
-    request.Open "GET", url, False
-    request.send
-    UrlExists = (request.Status = 200)
-    
-    Set request = Nothing
-    On Error GoTo 0
 End Function
 
 Private Sub CopycellFromTextbox(cell As Range, sheetName As String)
