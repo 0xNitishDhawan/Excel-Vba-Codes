@@ -1,0 +1,313 @@
+Sub ExcelToHTMLComs()
+    
+    Dim myPath As String
+    Dim myFile, SR, DR As String
+    Dim WS As Worksheet
+    Dim i As Integer, j As Integer, k As Integer
+    Dim lastrow As Long
+    Dim sourceWorkbook As Workbook
+    Dim filePath As String
+    Dim filePathBeg As String, filePathEnd As String
+    
+    Set WS = ThisWorkbook.Sheets("Sheet1")
+    
+    With WS
+        .Cells(1, 1) = "Fiscal Period"
+        .Cells(1, 2) = "Revenue Performance Summary"
+        .Cells(1, 3) = "Commercial Opex Summary"
+        .Cells(1, 4) = "Revenue Breakdown"
+        .Cells(1, 5) = "Revenue R&Os vs. MBP 2024-26"
+        .Cells(1, 6) = "Opex R&Os vs. MBP 2024-26"
+        .Cells(1, 7) = "Revenue Performance Summary"
+        .Cells(1, 8) = "Commercial Opex Summary"
+        .Cells(1, 9) = "Revenue Breakdown"
+        .Cells(1, 10) = "Revenue R&Os vs. MBP 2024-26"
+        .Cells(1, 11) = "Opex R&Os vs. MBP 2024-26"
+    End With
+    
+    filePathBeg = "https://heathrowportal.sharepoint.com/teams/BSC/BSCOps/BSCBDSM/Business%20Intelligence%20%20BI%20Reporting/FAW/Finance/Dynamic%20Commentary/Finance%20Commentary/02.%20Commercial/Source%20Data%20Files/"
+    filePathEnd = "%2024%20-%20Commercial.xlsx"
+    
+    i = WS.Range("A" & WS.Rows.Count).End(xlUp).Offset(1).Row
+    k=0
+    On Error Resume Next
+    For j = 12 To 1 Step -1
+        Set sourceWorkbook = Nothing
+        
+        If j < 10 Then
+            filePath = filePathBeg & "0" & j & filePathEnd
+        Else
+            filePath = filePathBeg & j & filePathEnd
+        End If
+        If k = 0 Then
+            If UrlExists(filePath) Then
+                k=1
+                Set sourceWorkbook = Workbooks.Open(filePath)
+                
+                If Not sourceWorkbook Is Nothing Then     
+        
+                Workbooks.Open Filename:=myPath & myFile
+                CopycellFromTextbox sourceWorkbook.Worksheets("Sheet1").Range("B2"), "Revenue Performance Summary"
+                CopycellFromTextbox sourceWorkbook.Worksheets("Sheet1").Range("C2"), "Commercial Opex Summary"
+                CopycellFromTextbox sourceWorkbook.Worksheets("Sheet1").Range("D2"), "Revenue Breakdown"
+                CopycellFromTextbox sourceWorkbook.Worksheets("Sheet1").Range("E2"), "Revenue R&Os vs. MBP 2024-26"
+                CopycellFromTextbox sourceWorkbook.Worksheets("Sheet1").Range("F2"), "Opex R&Os vs. MBP 2024-26"
+                sourceWorkbook.Worksheets("Sheet1").Range("A2").Value = sourceWorkbook.Worksheets("Revenue Performance Summary").Range("B6").Value
+
+                lastrow = sourceWorkbook.Worksheets("Sheet1").Range("A" & sourceWorkbook.Worksheets("Sheet1").Rows.Count).End(xlUp).Offset(0).Row
+                While sourceWorkbook.Worksheets("Sheet1").Cells(lastrow, 1).Value = ""
+                    lastrow = lastrow - 1
+                Wend
+                
+                SR = "A2:F" & lastrow
+                DR = "A" & i & ":F" & i + lastrow - 2
+                sourceWorkbook.Worksheets("Sheet1").Range(SR).Copy WS.Range(DR)
+                i = i + lastrow - 1
+                sourceWorkbook.Close savechanges:=False
+                End If
+            End If
+        End If
+    Next j
+
+    On Error GoTo 0 '
+
+
+    Application.ScreenUpdating = False
+
+
+'Insert Function fnConvert2HTML into G1 cell of Sheet1
+    Sheets("Sheet1").Select
+    Range("G2").FormulaLocal = "=fnConvert2HTML(B2)"
+    lastrow = Range("B" & Rows.Count).End(xlUp).Row
+    For i = 2 To lastrow
+        Range("G" & i).Select
+        ActiveCell.FormulaR1C1 = "=@fnConvert2HTML(RC[-5])"
+    Next
+    Range("G1:G" & lastrow).Copy
+    Range("G1").PasteSpecial Paste:=xlPasteValues
+    Range("G1:G" & lastrow).Replace What:="<br><br>", Replacement:="</p><p>"
+
+
+
+'Insert Function fnConvert2HTML into H1 cell of Sheet1
+    Sheets("Sheet1").Select
+    Range("H2").FormulaLocal = "=fnConvert2HTML(C2)"
+    lastrow = Range("C" & Rows.Count).End(xlUp).Row
+    For i = 2 To lastrow
+        Range("H" & i).Select
+        ActiveCell.FormulaR1C1 = "=@fnConvert2HTML(RC[-5])"
+    Next
+    Range("H1:H" & lastrow).Copy
+    Range("H1").PasteSpecial Paste:=xlPasteValues
+    Range("H1:H" & lastrow).Replace What:="<br><br>", Replacement:="</p><p>"
+
+
+
+'Insert Function fnConvert2HTML into I1 cell of Sheet1
+    Sheets("Sheet1").Select
+    Range("I2").FormulaLocal = "=fnConvert2HTML(D2)"
+    lastrow = Range("D" & Rows.Count).End(xlUp).Row
+    For i = 2 To lastrow
+        Range("I" & i).Select
+        ActiveCell.FormulaR1C1 = "=@fnConvert2HTML(RC[-5])"
+    Next
+    Range("I1:I" & lastrow).Copy
+    Range("I1").PasteSpecial Paste:=xlPasteValues
+    Range("I1:I" & lastrow).Replace What:="<br><br>", Replacement:="</p><p>"
+
+
+
+'Insert Function fnConvert2HTML into J1 cell of Sheet1
+    Sheets("Sheet1").Select
+    Range("J2").FormulaLocal = "=fnConvert2HTML(E2)"
+    lastrow = Range("E" & Rows.Count).End(xlUp).Row
+    For i = 2 To lastrow
+        Range("J" & i).Select
+        ActiveCell.FormulaR1C1 = "=@fnConvert2HTML(RC[-5])"
+    Next
+    Range("J1:J" & lastrow).Copy
+    Range("J1").PasteSpecial Paste:=xlPasteValues
+    Range("J1:J" & lastrow).Replace What:="<br><br>", Replacement:="</p><p>"
+
+
+
+'Insert Function fnConvert2HTML into K1 cell of Sheet1
+    Sheets("Sheet1").Select
+    Range("K2").FormulaLocal = "=fnConvert2HTML(F2)"
+    lastrow = Range("F" & Rows.Count).End(xlUp).Row
+    For i = 2 To lastrow
+        Range("K" & i).Select
+        ActiveCell.FormulaR1C1 = "=@fnConvert2HTML(RC[-5])"
+    Next
+    Range("K1:K" & lastrow).Copy
+    Range("K1").PasteSpecial Paste:=xlPasteValues
+    Range("K1:K" & lastrow).Replace What:="<br><br>", Replacement:="</p><p>"
+    
+    Dim wbSource As Workbook
+    Dim wbDestination As Workbook
+    Dim masterNextRow As Long
+    
+    Set wbSource = ThisWorkbook
+    Set wbDestination = Workbooks.Open("https://heathrowportal.sharepoint.com/teams/BSC/BSCOps/BSCBDSM/Business%20Intelligence%20%20BI%20Reporting/FAW/Finance/Dynamic%20Commentary/Finance%20Commentary/02.%20Commercial/Output%20File%20to%20Upload/FAW%20Upload%20-%20Commercial.csv")
+    
+    masterNextRow = wbDestination.Worksheets("FAW Upload - Commercial").Range("A" & wbDestination.Worksheets("FAW Upload - Commercial").Rows.Count).End(xlUp).Offset(1).Row
+    
+    wbSource.Worksheets("Sheet1").Range("A:A").Copy _
+    wbDestination.Worksheets("FAW Upload - Commercial").Range("A:A")
+    
+    wbSource.Worksheets("Sheet1").Range("G:K").Copy _
+    wbDestination.Worksheets("FAW Upload - Commercial").Range("B:F")
+    
+    wbDestination.Close (True)
+    wbSource.Close (True)
+
+
+End Sub
+
+Function fnConvert2HTML(myCell As Range) As String
+    Dim bldTagOn, itlTagOn, ulnTagOn, colTagOn As Boolean
+    Dim i, j, chrCount As Integer
+    Dim chrCol, chrLastCol, htmlTxt As String
+    j = 0
+    
+    bldTagOn = False
+    itlTagOn = False
+    ulnTagOn = False
+    colTagOn = False
+    htmlTxt = "<p>"
+    chrCol = "NONE"
+    chrCount = myCell.Characters.Count
+    
+    For i = 1 To chrCount
+        With myCell.Characters(i, 1)
+            If (.Font.Color) Then
+                chrCol = fnGetCol(.Font.Color)
+                If Not colTagOn Then
+                    htmlTxt = htmlTxt & "<font color=#" & chrCol & ">"
+                    colTagOn = True
+                Else
+                    If chrCol <> chrLastCol Then htmlTxt = htmlTxt & "</font><font color=#" & chrCol & ">"
+                End If
+            Else
+                chrCol = "NONE"
+                If colTagOn Then
+                    htmlTxt = htmlTxt & "</font>"
+                    colTagOn = False
+                End If
+            End If
+            chrLastCol = chrCol
+            
+            If .Font.Bold = True Then
+                If Not bldTagOn Then
+                    htmlTxt = htmlTxt & "<strong>"
+                    bldTagOn = True
+                End If
+            Else
+                If bldTagOn Then
+                    htmlTxt = htmlTxt & "</strong>"
+                    bldTagOn = False
+                End If
+            End If
+    
+            If .Font.Italic = True Then
+                If Not itlTagOn Then
+                    htmlTxt = htmlTxt & "<em>"
+                    itlTagOn = True
+                End If
+            Else
+                If itlTagOn Then
+                    htmlTxt = htmlTxt & "</em>"
+                    itlTagOn = False
+                End If
+            End If
+    
+            If .Font.Underline > 0 Then
+                If Not ulnTagOn Then
+                    htmlTxt = htmlTxt & "<u>"
+                    ulnTagOn = True
+                End If
+            Else
+                If ulnTagOn Then
+                    htmlTxt = htmlTxt & "</u>"
+                    ulnTagOn = False
+                End If
+            End If
+            
+            If (Asc(.Text) = 10) Then
+                htmlTxt = htmlTxt & "<br>"
+        j = 0
+            Else
+                htmlTxt = htmlTxt & .Text
+            End If
+        End With
+        If j > 300 And Mid(myCell.Value, i, 1) = " " Then
+         htmlTxt = htmlTxt & "<br>"
+            j = 0
+        Else
+            j = j + 1
+        End If
+    Next
+    
+    If colTagOn Then
+        htmlTxt = htmlTxt & "</font>"
+        colTagOn = False
+    End If
+    If bldTagOn Then
+        htmlTxt = htmlTxt & "</strong>"
+        bldTagOn = False
+    End If
+    If itlTagOn Then
+        htmlTxt = htmlTxt & "</em>"
+        itlTagOn = False
+    End If
+    If ulnTagOn Then
+        htmlTxt = htmlTxt & "</u>"
+        ulnTagOn = False
+    End If
+    htmlTxt = htmlTxt
+    fnConvert2HTML = htmlTxt & "</p>"
+     
+    If myCell.Value = "" Then
+        fnConvert2HTML = ""
+    End If
+    
+End Function
+
+Function fnGetCol(strCol As String) As String
+    Dim rVal, gVal, bVal As String
+    strCol = Right("000000" & Hex(strCol), 6)
+    bVal = Left(strCol, 2)
+    gVal = Mid(strCol, 3, 2)
+    rVal = Right(strCol, 2)
+    fnGetCol = rVal & gVal & bVal
+End Function
+
+Function UrlExists(url As String) As Boolean
+    Dim request As Object
+    Set request = CreateObject("MSXML2.XMLHTTP")
+    
+    On Error Resume Next
+    request.Open "GET", url, False
+    request.send
+    UrlExists = (request.Status = 200)
+    
+    Set request = Nothing
+    On Error GoTo 0
+End Function
+
+Private Sub CopycellFromTextbox(cell As Range, sheetName As String)
+    Dim textrange As TextRange2, tbox1 As Shape, fontType As Font2, cellfont As Font
+    Set tbox1 = Worksheets(sheetName).Shapes("Textbox 2"): Set textrange = tbox1.TextFrame2.textrange
+    cell.Value = textrange.Characters.Text
+    For i = 1 To Len(cell.Value)
+        Set fontType = textrange.Characters(i, 1).Font
+        Set cellfont = cell.Characters(i, 1).Font
+        With fontType
+            cellfont.Bold = IIf(.Bold, True, 0)                     'add bold/
+            cellfont.Italic = IIf(.Italic, True, 0)                 'add italic/
+            cellfont.Underline = IIf(.UnderlineStyle > 0, 2, -4142) 'add underline/
+            cellfont.Color = textrange.Characters(i, 1).Font.Fill.ForeColor.RGB 'add Font color
+            cellfont.Size = .Size
+        End With
+    Next i
+End Sub

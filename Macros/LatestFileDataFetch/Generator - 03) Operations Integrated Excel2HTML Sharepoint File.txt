@@ -1,0 +1,24 @@
+Sub RunOpsMacro()
+    Dim otherWorkbook As Workbook
+    Dim macroName As String
+    Dim otherWorkbookPath As String
+    
+    otherWorkbookPath = "https://heathrowportal.sharepoint.com/teams/BSC/BSCOps/BSCBDSM/Business%20Intelligence%20%20BI%20Reporting/FAW/Finance/Dynamic%20Commentary/Macros/Operations%20Macro.xlsm"
+
+    On Error Resume Next
+      Set otherWorkbook = Workbooks.Open(otherWorkbookPath)
+    On Error GoTo 0
+
+    If otherWorkbook Is Nothing Then
+        MsgBox "The external file could not be opened."
+        Exit Sub
+    End If
+
+    macroName = "Module1.ExcelToHTMLOps"
+
+    Application.Run "'" & otherWorkbook.Name & "'!" & macroName
+
+    otherWorkbook.Close SaveChanges:=False
+    
+    MsgBox "The Output File is Ready to Use"
+End Sub

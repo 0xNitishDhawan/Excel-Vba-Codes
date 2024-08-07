@@ -20,5 +20,5 @@ Sub RunComsMacro()
 
     otherWorkbook.Close SaveChanges:=False
     
-      MsgBox "Output File is Ready to Use"
+      MsgBox "The Output File is Ready to Use"
 End Sub

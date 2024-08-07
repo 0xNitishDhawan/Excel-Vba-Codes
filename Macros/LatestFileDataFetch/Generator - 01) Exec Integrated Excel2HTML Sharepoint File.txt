@@ -19,5 +19,5 @@ Sub RunExecMacro()
     Application.Run "'" & otherWorkbook.Name & "'!" & macroName
 
     otherWorkbook.Close SaveChanges:=False
-    
+    MsgBox "The output file is ready to use."		
 End Sub

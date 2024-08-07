@@ -1,12 +1,12 @@
-Sub RunOpsMacro()
+Sub RunSolMacro()
     Dim otherWorkbook As Workbook
     Dim macroName As String
     Dim otherWorkbookPath As String
     
-    otherWorkbookPath = "https://heathrowportal.sharepoint.com/teams/BSC/BSCOps/BSCBDSM/Business%20Intelligence%20%20BI%20Reporting/FAW/Finance/Dynamic%20Commentary/Macros/Operations%20Macro.xlsm"
+    otherWorkbookPath = "https://heathrowportal.sharepoint.com/teams/BSC/BSCOps/BSCBDSM/Business%20Intelligence%20%20BI%20Reporting/FAW/Finance/Dynamic%20Commentary/Macros/Solutions%20Macro.xlsm"
 
     On Error Resume Next
-      Set otherWorkbook = Workbooks.Open(otherWorkbookPath)
+    Set otherWorkbook = Workbooks.Open(otherWorkbookPath)
     On Error GoTo 0
 
     If otherWorkbook Is Nothing Then
@@ -14,11 +14,11 @@ Sub RunOpsMacro()
         Exit Sub
     End If
 
-    macroName = "Module1.ExcelToHTMLOps"
+    macroName = "Module1.ExcelToHTMLSol"
 
     Application.Run "'" & otherWorkbook.Name & "'!" & macroName
 
     otherWorkbook.Close SaveChanges:=False
     
-    MsgBox "Output File is Ready to Use"
+    MsgBox "The output file is ready to use."		
 End Sub

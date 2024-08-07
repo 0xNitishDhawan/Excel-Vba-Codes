@@ -1,0 +1,495 @@
+Sub ExcelToHTMLOps()
+Application.ScreenUpdating = False
+
+    Dim myPath As String
+    Dim myFile, SR, DR As String
+    Dim WS As Worksheet
+    Dim i As Integer
+    Dim lastrow As Long
+    Dim wbSource As Workbook
+    Dim wbDestination As Workbook
+    Dim masterNextRow As Long
+    
+    Set WS = ThisWorkbook.Sheets("Sheet1")
+    
+    With WS
+        .Cells.ClearContents
+        .Cells(1, 1) = "Fiscal Period"
+        .Cells(1, 2) = "Total Ops Summary"
+        .Cells(1, 3) = "Total Ops Performance"
+        .Cells(1, 4) = "Airport Operations"
+        .Cells(1, 5) = "Engineering and Baggage"
+        .Cells(1, 6) = "Ops Planning"
+        .Cells(1, 7) = "COO Directorate"
+        .Cells(1, 8) = "Security"
+        .Cells(1, 9) = "Services"
+        .Cells(1, 10) = "Team Heathrow"
+        .Cells(1, 11) = "Total Ops Summary"
+        .Cells(1, 12) = "Total Ops Performance"
+        .Cells(1, 13) = "Airport Operations"
+        .Cells(1, 14) = "Engineering and Baggage"
+        .Cells(1, 15) = "Ops Planning"
+        .Cells(1, 16) = "COO Directorate"
+        .Cells(1, 17) = "Security"
+        .Cells(1, 18) = "Services"
+        .Cells(1, 19) = "Team Heathrow"
+    End With
+    
+    
+    UserName = Environ("UserName")
+    myPath = "C:\Users\" & UserName & "\Heathrow Airport Ltd\Business Services, Business Intelligence - BI Reporting\FAW\Finance\Dynamic Commentary\Finance Commentary\03. Operations\Source Data Files\"
+
+    On Error GoTo ErrorHandler
+    myFile = Dir(myPath)
+    i = WS.Range("A" & WS.Rows.Count).End(xlUp).Offset(1).Row
+    
+    Do While myFile <> ""
+    
+        Workbooks.Open Filename:=myPath & myFile
+
+        CopycellFromTextbox ActiveWorkbook.Worksheets("Sheet1").Range("B2"), "Total Ops Summary"
+        CopycellFromTextbox ActiveWorkbook.Worksheets("Sheet1").Range("C2"), "Total Ops Performance"
+        CopycellFromTextbox ActiveWorkbook.Worksheets("Sheet1").Range("D2"), "Airport Operations"
+        CopycellFromTextbox ActiveWorkbook.Worksheets("Sheet1").Range("E2"), "Engineering and Baggage"
+        CopycellFromTextbox ActiveWorkbook.Worksheets("Sheet1").Range("F2"), "Ops Planning"
+        CopycellFromTextbox ActiveWorkbook.Worksheets("Sheet1").Range("G2"), "COO Directorate"
+        CopycellFromTextbox ActiveWorkbook.Worksheets("Sheet1").Range("H2"), "Security"
+        CopycellFromTextbox ActiveWorkbook.Worksheets("Sheet1").Range("I2"), "Services"
+        CopycellFromTextbox ActiveWorkbook.Worksheets("Sheet1").Range("J2"), "Team Heathrow"
+        ActiveWorkbook.Worksheets("Sheet1").Range("A2").Value = ActiveWorkbook.Worksheets("Total Ops Summary").Range("B6").Value
+
+        
+        
+        lastrow = ActiveWorkbook.Worksheets("Sheet1").Range("A" & ActiveWorkbook.Worksheets("Sheet1").Rows.Count).End(xlUp).Offset(0).Row
+        While ActiveWorkbook.Worksheets("Sheet1").Cells(lastrow, 1).Value = ""
+            lastrow = lastrow - 1
+        Wend
+        
+        SR = "A2:J" & lastrow
+        DR = "A" & i & ":J" & i + lastrow - 2
+        ActiveWorkbook.Worksheets("Sheet1").Range(SR).Copy WS.Range(DR)
+        i = i + lastrow - 1
+        ActiveWorkbook.Close savechanges:=False
+        myFile = Dir
+    Loop
+
+   
+'Insert Function fnConvert2HTML into K1 cell of Sheet1
+    Sheets("Sheet1").Select
+    Range("K2").FormulaLocal = "=fnConvert2HTML(B2)"
+    lastrow = Range("B" & Rows.Count).End(xlUp).Row
+    For i = 2 To lastrow
+        Range("K" & i).Select
+        ActiveCell.FormulaR1C1 = "=@fnConvert2HTML(RC[-9])"
+    Next
+    Range("K1:K" & lastrow).Copy
+    Range("K1").PasteSpecial Paste:=xlPasteValues
+    Range("K1:K" & lastrow).Replace What:="<br><br>", Replacement:="</p><p>"
+
+'Insert Function fnConvert2HTML into L1 cell of Sheet1
+    Sheets("Sheet1").Select
+    Range("L2").FormulaLocal = "=fnConvert2HTML(C2)"
+    lastrow = Range("C" & Rows.Count).End(xlUp).Row
+    For i = 2 To lastrow
+        Range("L" & i).Select
+        ActiveCell.FormulaR1C1 = "=@fnConvert2HTML(RC[-9])"
+    Next
+    Range("L1:L" & lastrow).Copy
+    Range("L1").PasteSpecial Paste:=xlPasteValues
+    Range("L1:L" & lastrow).Replace What:="<br><br>", Replacement:="</p><p>"
+
+'Insert Function fnConvert2HTML into M1 cell of Sheet1
+    Sheets("Sheet1").Select
+    Range("M2").FormulaLocal = "=fnConvert2HTML(D2)"
+    lastrow = Range("D" & Rows.Count).End(xlUp).Row
+    For i = 2 To lastrow
+        Range("M" & i).Select
+        ActiveCell.FormulaR1C1 = "=@fnConvert2HTML(RC[-9])"
+    Next
+    Range("M1:M" & lastrow).Copy
+    Range("M1").PasteSpecial Paste:=xlPasteValues
+    Range("M1:M" & lastrow).Replace What:="<br><br>", Replacement:="</p><p>"
+
+'Insert Function fnConvert2HTML into N1 cell of Sheet1
+    Sheets("Sheet1").Select
+    Range("N2").FormulaLocal = "=fnConvert2HTML(E2)"
+    lastrow = Range("E" & Rows.Count).End(xlUp).Row
+    For i = 2 To lastrow
+        Range("N" & i).Select
+        ActiveCell.FormulaR1C1 = "=@fnConvert2HTML(RC[-9])"
+    Next
+    Range("N1:N" & lastrow).Copy
+    Range("N1").PasteSpecial Paste:=xlPasteValues
+    Range("N1:N" & lastrow).Replace What:="<br><br>", Replacement:="</p><p>"
+
+'Insert Function fnConvert2HTML into O1 cell of Sheet1
+    Sheets("Sheet1").Select
+    Range("O2").FormulaLocal = "=fnConvert2HTML(F2)"
+    lastrow = Range("F" & Rows.Count).End(xlUp).Row
+    For i = 2 To lastrow
+        Range("O" & i).Select
+        ActiveCell.FormulaR1C1 = "=@fnConvert2HTML(RC[-9])"
+    Next
+    Range("O1:O" & lastrow).Copy
+    Range("O1").PasteSpecial Paste:=xlPasteValues
+    Range("O1:O" & lastrow).Replace What:="<br><br>", Replacement:="</p><p>"
+
+'Insert Function fnConvert2HTML into P1 cell of Sheet1
+    Sheets("Sheet1").Select
+    Range("P2").FormulaLocal = "=fnConvert2HTML(G2)"
+    lastrow = Range("G" & Rows.Count).End(xlUp).Row
+    For i = 2 To lastrow
+        Range("P" & i).Select
+        ActiveCell.FormulaR1C1 = "=@fnConvert2HTML(RC[-9])"
+    Next
+    Range("P1:P" & lastrow).Copy
+    Range("P1").PasteSpecial Paste:=xlPasteValues
+    Range("P1:P" & lastrow).Replace What:="<br><br>", Replacement:="</p><p>"
+
+'Insert Function fnConvert2HTML into Q1 cell of Sheet1
+    Sheets("Sheet1").Select
+    Range("Q2").FormulaLocal = "=fnConvert2HTML(H2)"
+    lastrow = Range("H" & Rows.Count).End(xlUp).Row
+    For i = 2 To lastrow
+        Range("Q" & i).Select
+        ActiveCell.FormulaR1C1 = "=@fnConvert2HTML(RC[-9])"
+    Next
+    Range("Q1:Q" & lastrow).Copy
+    Range("Q1").PasteSpecial Paste:=xlPasteValues
+    Range("Q1:Q" & lastrow).Replace What:="<br><br>", Replacement:="</p><p>"
+
+'Insert Function fnConvert2HTML into R1 cell of Sheet1
+    Sheets("Sheet1").Select
+    Range("R2").FormulaLocal = "=fnConvert2HTML(I2)"
+    lastrow = Range("I" & Rows.Count).End(xlUp).Row
+    For i = 2 To lastrow
+        Range("R" & i).Select
+        ActiveCell.FormulaR1C1 = "=@fnConvert2HTML(RC[-9])"
+    Next
+    Range("R1:R" & lastrow).Copy
+    Range("R1").PasteSpecial Paste:=xlPasteValues
+    Range("R1:R" & lastrow).Replace What:="<br><br>", Replacement:="</p><p>"
+
+'Insert Function fnConvert2HTML into S1 cell of Sheet1
+    Sheets("Sheet1").Select
+    Range("S2").FormulaLocal = "=fnConvert2HTML(J2)"
+    lastrow = Range("J" & Rows.Count).End(xlUp).Row
+    For i = 2 To lastrow
+        Range("S" & i).Select
+        ActiveCell.FormulaR1C1 = "=@fnConvert2HTML(RC[-9])"
+    Next
+    Range("S1:S" & lastrow).Copy
+    Range("S1").PasteSpecial Paste:=xlPasteValues
+    Range("S1:S" & lastrow).Replace What:="<br><br>", Replacement:="</p><p>"
+    
+    
+    Set wbSource = ThisWorkbook
+    Set wbDestination = Workbooks.Open("C:\Users\" & UserName & "\Heathrow Airport Ltd\Business Services, Business Intelligence - BI Reporting\FAW\Finance\Dynamic Commentary\Finance Commentary\03. Operations\Output File to Upload\FAW Upload - Operations.csv")
+
+    masterNextRow = wbDestination.Worksheets("FAW Upload - Operations").Range("A" & wbDestination.Worksheets("FAW Upload - Operations").Rows.Count).End(xlUp).Offset(1).Row
+    
+    wbSource.Worksheets("Sheet1").Range("A:A").Copy _
+    wbDestination.Worksheets("FAW Upload - Operations").Range("A:A")
+    
+    wbSource.Worksheets("Sheet1").Range("K:S").Copy _
+    wbDestination.Worksheets("FAW Upload - Operations").Range("B:J")
+    
+    wbDestination.Close (True)
+Application.ScreenUpdating = True
+Exit Sub
+
+ErrorHandler:
+    myPath = "C:\Users\" & UserName & "\Heathrow Airport Ltd\Business Services, Business Intelligence - Dynamic Commentary\Finance Commentary\03. Operations\Source Data Files\"
+    myFile = Dir(myPath)
+    i = WS.Range("A" & WS.Rows.Count).End(xlUp).Offset(1).Row
+    
+    Do While myFile <> ""
+    
+        Workbooks.Open Filename:=myPath & myFile
+
+        CopycellFromTextbox ActiveWorkbook.Worksheets("Sheet1").Range("B2"), "Total Ops Summary"
+        CopycellFromTextbox ActiveWorkbook.Worksheets("Sheet1").Range("C2"), "Total Ops Performance"
+        CopycellFromTextbox ActiveWorkbook.Worksheets("Sheet1").Range("D2"), "Airport Operations"
+        CopycellFromTextbox ActiveWorkbook.Worksheets("Sheet1").Range("E2"), "Engineering and Baggage"
+        CopycellFromTextbox ActiveWorkbook.Worksheets("Sheet1").Range("F2"), "Ops Planning"
+        CopycellFromTextbox ActiveWorkbook.Worksheets("Sheet1").Range("G2"), "COO Directorate"
+        CopycellFromTextbox ActiveWorkbook.Worksheets("Sheet1").Range("H2"), "Security"
+        CopycellFromTextbox ActiveWorkbook.Worksheets("Sheet1").Range("I2"), "Services"
+        CopycellFromTextbox ActiveWorkbook.Worksheets("Sheet1").Range("J2"), "Team Heathrow"
+        ActiveWorkbook.Worksheets("Sheet1").Range("A2").Value = ActiveWorkbook.Worksheets("Total Ops Summary").Range("B6").Value
+
+        
+        
+        lastrow = ActiveWorkbook.Worksheets("Sheet1").Range("A" & ActiveWorkbook.Worksheets("Sheet1").Rows.Count).End(xlUp).Offset(0).Row
+        While ActiveWorkbook.Worksheets("Sheet1").Cells(lastrow, 1).Value = ""
+            lastrow = lastrow - 1
+        Wend
+        
+        SR = "A2:J" & lastrow
+        DR = "A" & i & ":J" & i + lastrow - 2
+        ActiveWorkbook.Worksheets("Sheet1").Range(SR).Copy WS.Range(DR)
+        i = i + lastrow - 1
+        ActiveWorkbook.Close savechanges:=False
+        myFile = Dir
+    Loop
+
+   
+'Insert Function fnConvert2HTML into K1 cell of Sheet1
+    Sheets("Sheet1").Select
+    Range("K2").FormulaLocal = "=fnConvert2HTML(B2)"
+    lastrow = Range("B" & Rows.Count).End(xlUp).Row
+    For i = 2 To lastrow
+        Range("K" & i).Select
+        ActiveCell.FormulaR1C1 = "=@fnConvert2HTML(RC[-9])"
+    Next
+    Range("K1:K" & lastrow).Copy
+    Range("K1").PasteSpecial Paste:=xlPasteValues
+    Range("K1:K" & lastrow).Replace What:="<br><br>", Replacement:="</p><p>"
+
+'Insert Function fnConvert2HTML into L1 cell of Sheet1
+    Sheets("Sheet1").Select
+    Range("L2").FormulaLocal = "=fnConvert2HTML(C2)"
+    lastrow = Range("C" & Rows.Count).End(xlUp).Row
+    For i = 2 To lastrow
+        Range("L" & i).Select
+        ActiveCell.FormulaR1C1 = "=@fnConvert2HTML(RC[-9])"
+    Next
+    Range("L1:L" & lastrow).Copy
+    Range("L1").PasteSpecial Paste:=xlPasteValues
+    Range("L1:L" & lastrow).Replace What:="<br><br>", Replacement:="</p><p>"
+
+'Insert Function fnConvert2HTML into M1 cell of Sheet1
+    Sheets("Sheet1").Select
+    Range("M2").FormulaLocal = "=fnConvert2HTML(D2)"
+    lastrow = Range("D" & Rows.Count).End(xlUp).Row
+    For i = 2 To lastrow
+        Range("M" & i).Select
+        ActiveCell.FormulaR1C1 = "=@fnConvert2HTML(RC[-9])"
+    Next
+    Range("M1:M" & lastrow).Copy
+    Range("M1").PasteSpecial Paste:=xlPasteValues
+    Range("M1:M" & lastrow).Replace What:="<br><br>", Replacement:="</p><p>"
+
+'Insert Function fnConvert2HTML into N1 cell of Sheet1
+    Sheets("Sheet1").Select
+    Range("N2").FormulaLocal = "=fnConvert2HTML(E2)"
+    lastrow = Range("E" & Rows.Count).End(xlUp).Row
+    For i = 2 To lastrow
+        Range("N" & i).Select
+        ActiveCell.FormulaR1C1 = "=@fnConvert2HTML(RC[-9])"
+    Next
+    Range("N1:N" & lastrow).Copy
+    Range("N1").PasteSpecial Paste:=xlPasteValues
+    Range("N1:N" & lastrow).Replace What:="<br><br>", Replacement:="</p><p>"
+
+'Insert Function fnConvert2HTML into O1 cell of Sheet1
+    Sheets("Sheet1").Select
+    Range("O2").FormulaLocal = "=fnConvert2HTML(F2)"
+    lastrow = Range("F" & Rows.Count).End(xlUp).Row
+    For i = 2 To lastrow
+        Range("O" & i).Select
+        ActiveCell.FormulaR1C1 = "=@fnConvert2HTML(RC[-9])"
+    Next
+    Range("O1:O" & lastrow).Copy
+    Range("O1").PasteSpecial Paste:=xlPasteValues
+    Range("O1:O" & lastrow).Replace What:="<br><br>", Replacement:="</p><p>"
+
+'Insert Function fnConvert2HTML into P1 cell of Sheet1
+    Sheets("Sheet1").Select
+    Range("P2").FormulaLocal = "=fnConvert2HTML(G2)"
+    lastrow = Range("G" & Rows.Count).End(xlUp).Row
+    For i = 2 To lastrow
+        Range("P" & i).Select
+        ActiveCell.FormulaR1C1 = "=@fnConvert2HTML(RC[-9])"
+    Next
+    Range("P1:P" & lastrow).Copy
+    Range("P1").PasteSpecial Paste:=xlPasteValues
+    Range("P1:P" & lastrow).Replace What:="<br><br>", Replacement:="</p><p>"
+
+'Insert Function fnConvert2HTML into Q1 cell of Sheet1
+    Sheets("Sheet1").Select
+    Range("Q2").FormulaLocal = "=fnConvert2HTML(H2)"
+    lastrow = Range("H" & Rows.Count).End(xlUp).Row
+    For i = 2 To lastrow
+        Range("Q" & i).Select
+        ActiveCell.FormulaR1C1 = "=@fnConvert2HTML(RC[-9])"
+    Next
+    Range("Q1:Q" & lastrow).Copy
+    Range("Q1").PasteSpecial Paste:=xlPasteValues
+    Range("Q1:Q" & lastrow).Replace What:="<br><br>", Replacement:="</p><p>"
+
+'Insert Function fnConvert2HTML into R1 cell of Sheet1
+    Sheets("Sheet1").Select
+    Range("R2").FormulaLocal = "=fnConvert2HTML(I2)"
+    lastrow = Range("I" & Rows.Count).End(xlUp).Row
+    For i = 2 To lastrow
+        Range("R" & i).Select
+        ActiveCell.FormulaR1C1 = "=@fnConvert2HTML(RC[-9])"
+    Next
+    Range("R1:R" & lastrow).Copy
+    Range("R1").PasteSpecial Paste:=xlPasteValues
+    Range("R1:R" & lastrow).Replace What:="<br><br>", Replacement:="</p><p>"
+
+'Insert Function fnConvert2HTML into S1 cell of Sheet1
+    Sheets("Sheet1").Select
+    Range("S2").FormulaLocal = "=fnConvert2HTML(J2)"
+    lastrow = Range("J" & Rows.Count).End(xlUp).Row
+    For i = 2 To lastrow
+        Range("S" & i).Select
+        ActiveCell.FormulaR1C1 = "=@fnConvert2HTML(RC[-9])"
+    Next
+    Range("S1:S" & lastrow).Copy
+    Range("S1").PasteSpecial Paste:=xlPasteValues
+    Range("S1:S" & lastrow).Replace What:="<br><br>", Replacement:="</p><p>"
+    
+    
+    Set wbSource = ThisWorkbook
+    Set wbDestination = Workbooks.Open("C:\Users\" & UserName & "\Heathrow Airport Ltd\Business Services, Business Intelligence - Dynamic Commentary\Finance Commentary\03. Operations\Output File to Upload\FAW Upload - Operations.csv")
+
+    masterNextRow = wbDestination.Worksheets("FAW Upload - Operations").Range("A" & wbDestination.Worksheets("FAW Upload - Operations").Rows.Count).End(xlUp).Offset(1).Row
+    
+    wbSource.Worksheets("Sheet1").Range("A:A").Copy _
+    wbDestination.Worksheets("FAW Upload - Operations").Range("A:A")
+    
+    wbSource.Worksheets("Sheet1").Range("K:S").Copy _
+    wbDestination.Worksheets("FAW Upload - Operations").Range("B:J")
+    
+    wbDestination.Close (True)
+Application.ScreenUpdating = True
+
+End Sub
+
+Function fnConvert2HTML(myCell As Range) As String
+    Dim bldTagOn, itlTagOn, ulnTagOn, colTagOn As Boolean
+    Dim i, j, chrCount As Integer
+    Dim chrCol, chrLastCol, htmlTxt As String
+    j = 0
+    
+    bldTagOn = False
+    itlTagOn = False
+    ulnTagOn = False
+    colTagOn = False
+    htmlTxt = "<p>"
+    chrCol = "NONE"
+    chrCount = myCell.Characters.Count
+    
+    For i = 1 To chrCount
+        With myCell.Characters(i, 1)
+            If (.Font.Color) Then
+                chrCol = fnGetCol(.Font.Color)
+                If Not colTagOn Then
+                    htmlTxt = htmlTxt & "<font color=#" & chrCol & ">"
+                    colTagOn = True
+                Else
+                    If chrCol <> chrLastCol Then htmlTxt = htmlTxt & "</font><font color=#" & chrCol & ">"
+                End If
+            Else
+                chrCol = "NONE"
+                If colTagOn Then
+                    htmlTxt = htmlTxt & "</font>"
+                    colTagOn = False
+                End If
+            End If
+            chrLastCol = chrCol
+            
+            If .Font.Bold = True Then
+                If Not bldTagOn Then
+                    htmlTxt = htmlTxt & "<strong>"
+                    bldTagOn = True
+                End If
+            Else
+                If bldTagOn Then
+                    htmlTxt = htmlTxt & "</strong>"
+                    bldTagOn = False
+                End If
+            End If
+    
+            If .Font.Italic = True Then
+                If Not itlTagOn Then
+                    htmlTxt = htmlTxt & "<em>"
+                    itlTagOn = True
+                End If
+            Else
+                If itlTagOn Then
+                    htmlTxt = htmlTxt & "</em>"
+                    itlTagOn = False
+                End If
+            End If
+    
+            If .Font.Underline > 0 Then
+                If Not ulnTagOn Then
+                    htmlTxt = htmlTxt & "<u>"
+                    ulnTagOn = True
+                End If
+            Else
+                If ulnTagOn Then
+                    htmlTxt = htmlTxt & "</u>"
+                    ulnTagOn = False
+                End If
+            End If
+            
+            If (Asc(.Text) = 10) Then
+                htmlTxt = htmlTxt & "<br>"
+        j = 0
+            Else
+                htmlTxt = htmlTxt & .Text
+            End If
+        End With
+        If j > 280 And Mid(myCell.Value, i, 1) = " " Then
+         htmlTxt = htmlTxt & "<br>"
+            j = 0
+        Else
+            j = j + 1
+        End If
+    Next
+    
+    If colTagOn Then
+        htmlTxt = htmlTxt & "</font>"
+        colTagOn = False
+    End If
+    If bldTagOn Then
+        htmlTxt = htmlTxt & "</strong>"
+        bldTagOn = False
+    End If
+    If itlTagOn Then
+        htmlTxt = htmlTxt & "</em>"
+        itlTagOn = False
+    End If
+    If ulnTagOn Then
+        htmlTxt = htmlTxt & "</u>"
+        ulnTagOn = False
+    End If
+    htmlTxt = htmlTxt
+    fnConvert2HTML = htmlTxt & "</p>"
+     
+    If myCell.Value = "" Then
+        fnConvert2HTML = ""
+    End If
+    
+End Function
+
+Function fnGetCol(strCol As String) As String
+    Dim rVal, gVal, bVal As String
+    strCol = Right("000000" & Hex(strCol), 6)
+    bVal = Left(strCol, 2)
+    gVal = Mid(strCol, 3, 2)
+    rVal = Right(strCol, 2)
+    fnGetCol = rVal & gVal & bVal
+End Function
+
+Private Sub CopycellFromTextbox(cell As Range, sheetName As String)
+    Dim textrange As TextRange2, tbox1 As Shape, fontType As Font2, cellfont As Font
+    Set tbox1 = Worksheets(sheetName).Shapes("TextBox 2"): Set textrange = tbox1.TextFrame2.textrange
+    cell.Value = textrange.Characters.Text
+    For i = 1 To Len(cell.Value)
+        Set fontType = textrange.Characters(i, 1).Font
+        Set cellfont = cell.Characters(i, 1).Font
+        With fontType
+            cellfont.Bold = IIf(.Bold, True, 0)                     'add bold/
+            cellfont.Italic = IIf(.Italic, True, 0)                 'add italic/
+            cellfont.Underline = IIf(.UnderlineStyle > 0, 2, -4142) 'add underline/
+            cellfont.Color = textrange.Characters(i, 1).Font.Fill.ForeColor.RGB 'add Font color
+            cellfont.Size = .Size
+        End With
+    Next i
+End Sub

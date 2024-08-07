@@ -1,0 +1,37 @@
+Sub RunOpsMacro()
+Application.ScreenUpdating = False
+    Dim otherWorkbook As Workbook
+    Dim macroName As String
+    Dim otherWorkbookPath As String
+    Dim UserName As String
+    
+     UserName = Environ("UserName")
+     otherWorkbookPath = "C:\Users\" & UserName & "\Heathrow Airport Ltd\Business Services, Business Intelligence - BI Reporting\FAW\Finance\Dynamic Commentary\Macros\Operations Macro.xlsm"
+
+On Error GoTo ErrorHandler
+    Set otherWorkbook = Workbooks.Open(otherWorkbookPath)
+
+    macroName = "Module1.ExcelToHTMLOps"
+    Application.Run "'" & otherWorkbook.Name & "'!" & macroName
+
+    otherWorkbook.Close SaveChanges:=False
+    
+    MsgBox "Output File is Ready to Use"
+    Application.ScreenUpdating = True
+    Exit Sub
+    
+ErrorHandler:
+    otherWorkbookPath = "C:\Users\" & UserName & "\Heathrow Airport Ltd\Business Services, Business Intelligence - Dynamic Commentary\Macros\Operations Macro.xlsm"
+
+    Set otherWorkbook = Workbooks.Open(otherWorkbookPath)
+
+    macroName = "Module1.ExcelToHTMLOps"
+    Application.Run "'" & otherWorkbook.Name & "'!" & macroName
+
+    otherWorkbook.Close SaveChanges:=False
+    
+    MsgBox "Output File is Ready to Use"
+    Application.ScreenUpdating = True
+    Exit Sub
+    
+End Sub

@@ -20,5 +20,5 @@ Sub RunSolMacro()
 
     otherWorkbook.Close SaveChanges:=False
     
-    MsgBox "Output File is Ready to Use"
+    MsgBox "The output file is ready to use."		
 End Sub
